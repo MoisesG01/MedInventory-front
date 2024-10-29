@@ -1,0 +1,176 @@
+.login-page {
+    background-size: cover;
+    background-repeat: repeat;
+    min-height: 70vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Inter'; 
+}
+
+.login-container {
+    background-color: rgba(8, 7, 63, 0.7);
+    padding: 40px;
+    border-radius: 10px;
+    display: flex;
+    gap: 30px;
+    max-width: 800px; 
+    width: 100%;
+    color: #fff;
+    padding-left: 60px;
+    padding-right: 50px;
+}
+
+.signup-section,
+.login-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 300px;
+}
+
+.signup-section{
+    text-align: center;
+}
+
+h2 {
+    margin-bottom: 20px;
+}
+
+.login-btn-in {
+    width: 100%; 
+    padding: 10px;
+    margin-bottom: 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease; 
+}
+
+.google-btn,
+.email-btn {
+    width: 100%; 
+    padding: 15px;
+    margin-top: 10px;
+    margin-bottom: 18px;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.google-btn {
+    background-color: #fff;
+    color: #000;
+}
+
+.google-btn:hover {
+    background-color: #382d2d;
+    color: #faf5f5;
+}
+
+.email-btn {
+    background-color: #fff;
+    color: #000;
+}
+
+.email-btn:hover {
+    background-color: #382d2d;
+    color: #faf5f5;
+}
+
+.login-btn-in {
+    background: linear-gradient(90deg, #91B3FA, #797AE0);
+    color: #fff;
+}
+
+.login-btn-in:hover {
+    background: linear-gradient(90deg, #18b86d, #045201);
+    color: #fff;
+}
+
+.navbar-buttons button:hover {
+    background-color: #f0efef;
+    color: #333;
+  }
+
+.input-group {
+    width: 100%; 
+    margin-bottom: 15px;
+}
+
+.input-group label {
+    margin-bottom: 5px; 
+    font-size: 14px;
+}
+
+.input-with-icon {
+    position: relative;
+    width: 100%;
+}
+
+.input-with-icon input {
+    width: 100%; 
+    padding: 10px 40px; 
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    transition: border-color 0.3s; 
+}
+
+.input-with-icon input:focus {
+    border-color: #007BFF; 
+    outline: none;
+}
+
+.input-icon {
+    position: absolute;
+    left: 10px; 
+    top: 50%;
+    transform: translateY(-50%);
+    color: #ccc; 
+}
+
+.toggle-password {
+    position: absolute;
+    right: 10px; 
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #007BFF;
+    cursor: pointer;
+    font-size: 14px; 
+}
+
+.forgot-password {
+    color: #9AC7FF;
+    margin-top: 10px;
+    text-decoration: none;
+}
+
+.forgot-password:hover {
+    text-decoration: underline; 
+}
+
+.divider {
+    width: 1px;
+    background-color: #fff;
+    opacity: 0.2;
+    margin: 0 20px; 
+}
+
+p {
+    font-size: 13px;
+    color: #ebe5e5;
+    margin-top: 10px;
+}
+
+.term {
+    margin-top: 10px;
+    color: #ccc;
+}
+
+.term:hover {
+    color: #478fe2;
+}

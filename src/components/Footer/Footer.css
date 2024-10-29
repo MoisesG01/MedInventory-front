@@ -1,0 +1,123 @@
+.footer {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    background-color: #263238;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+    color: #faf8f8;
+    font-family: 'Inter';
+    padding-top: 50px;
+  }
+  
+  .footer-left {
+    max-width: 300px;
+  }
+  
+  .footer-logo {
+    display: flex;
+    align-items: center;
+    margin-bottom: 25px;
+  }
+  
+  .footer-logo img {
+    height: 40px;
+    margin-right: 10px;
+    padding-left: 100px;
+  }
+  
+  .social-icons {
+    color: #ebe5e5;
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+    padding-left: 100px;
+  }
+  
+  .social-icons svg {
+    cursor: pointer;
+    transition: transform 0.3s;
+  }
+  
+  .social-icons svg:hover {
+    transform: scale(1.2);
+    color: #7fa7f1; 
+  }
+  
+  .footer-links {
+    font-family: 'Inter';
+    color: #ebe5e5;
+    display: flex;
+    gap: 50px;
+    padding-bottom: 10px;
+
+  }
+  
+  .footer-links h4 {
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .footer-links ul {
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: 20px;
+  }
+
+  .footer-links li {
+    margin-bottom: 8px; 
+  }
+  
+  .footer-links a {
+    font-family: 'Inter';
+    padding-bottom: 5px;
+    padding-right: 30px;
+    text-decoration: none;
+    color: #f7f7f7;
+    transition: color 0.3s;
+  }
+  
+  .footer-links a:hover {
+    color: #007BFF; 
+  }
+  
+  .newsletter {
+    padding-right: 50px;
+    position: relative;
+  }
+  
+  .newsletter input {
+    padding: 10px;
+    width: 200px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .newsletter button {
+    padding-right: 50px;
+    position: absolute;
+    right: 20px;
+    top: 40%;
+    transform: translateY(-50%);
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: #525252;
+  }
+  
+  .footer p {
+    font-size: 15px;
+    color: #ebe5e5;
+    margin-top: 10px;
+    padding-left: 100px;
+  }
+
+  .footer span {
+    font-family: 'Inter';
+    font-size: 30px;
+    color: #ebe5e5;
+    letter-spacing: 5px;
+    margin-top: 10px;
+  }
+  
