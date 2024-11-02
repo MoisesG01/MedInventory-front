@@ -1,6 +1,6 @@
 import React from 'react';
 import './Footer.css';
-import { FaInstagram, FaTwitter, FaYoutube, FaGlobe, FaPaperPlane } from 'react-icons/fa'; // Importando o ícone do avião de papel
+import { FaInstagram, FaTwitter, FaYoutube, FaGlobe, FaPaperPlane } from 'react-icons/fa'; 
 
 const Footer = () => {
   return (

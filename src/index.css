@@ -38,7 +38,7 @@ main {
 
 body {
   font-family: Arial, sans-serif;
-  background: url('C:/Users/User/Documents/medinventory-front/public/background.png') repeat; 
+  background: url('/public/background.png') repeat; 
   background-size: cover;
   color: #333;
 }
