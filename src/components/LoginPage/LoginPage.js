@@ -20,7 +20,7 @@ const LoginPage = () => {
           <button className="email-btn"> <FaEnvelope /> Sign up with email</button>
           <p>
             By signing up, you agree to the <a className='term' href="/terms">Terms of Service</a> and
-            acknowledge you've read our <a className='term' href="/privacy">Privacy Policy</a>.
+            acknowledge you've read our <a className='term' href="/terms">Privacy Policy</a>.
           </p>
         </div>
         <div className="divider"></div>

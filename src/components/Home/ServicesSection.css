@@ -44,7 +44,7 @@
   
   .service-box:hover {
     transform: scale(1.09); 
-    transform: translateY(-10px);
+    transform: translateY(-15px);
     box-shadow: 0 8px 20px rgba(243, 237, 237, 0.2); 
     background-color: rgba(3, 5, 109, 0.733); 
     color: white;

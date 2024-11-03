@@ -22,7 +22,7 @@ const Navbar = () => {
         <li><Link to="/home">About</Link></li>
         <li><ScrollLink to="services" smooth={true} duration={500}>Services</ScrollLink></li>
         <li><ScrollLink to="plans" smooth={true} duration={500}>Plans</ScrollLink></li>
-        <li><Link to="/home">Terms & Conditions</Link></li>
+        <li><Link to="/terms">Terms & Conditions</Link></li>
         <li><ScrollLink to="faq" smooth={true} duration={500}>Help</ScrollLink></li>
       </ul>
       <div className="navbar-buttons">
