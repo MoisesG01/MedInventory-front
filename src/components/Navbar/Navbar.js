@@ -2,6 +2,7 @@ import React from 'react';
 import './Navbar.css';
 import { FaUserAlt, FaSignInAlt } from 'react-icons/fa';
 import { Link, useLocation } from 'react-router-dom';
+import { Link as ScrollLink } from 'react-scroll';
 
 const Navbar = () => {
   const location = useLocation();
@@ -17,11 +18,12 @@ const Navbar = () => {
         <span className="navbar-title">MedInventory</span>
       </div>
       <ul className="navbar-links">
-        <li><Link to="/">Home</Link></li>
-        <li><Link to="/about">About</Link></li>
-        <li><Link to="/services">Services</Link></li>
-        <li><Link to="/terms">Terms & Conditions</Link></li>
-        <li><Link to="/help">Help</Link></li>
+        <li><Link to="/home">Home</Link></li>
+        <li><Link to="/home">About</Link></li>
+        <li><ScrollLink to="services" smooth={true} duration={500}>Services</ScrollLink></li>
+        <li><ScrollLink to="plans" smooth={true} duration={500}>Plans</ScrollLink></li>
+        <li><Link to="/home">Terms & Conditions</Link></li>
+        <li><ScrollLink to="faq" smooth={true} duration={500}>Help</ScrollLink></li>
       </ul>
       <div className="navbar-buttons">
         <Link to="/signup">

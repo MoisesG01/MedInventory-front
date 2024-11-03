@@ -41,6 +41,8 @@ body {
   background: url('/public/background.png') repeat; 
   background-size: cover;
   color: #333;
+  width: auto;
+  height: auto;
 }
 
 #root {
@@ -57,5 +59,9 @@ main {
 /* Para garantir que o footer fique sempre no final da página */
 .footer {
   margin-top: auto;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 

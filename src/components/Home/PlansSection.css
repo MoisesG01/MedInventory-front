@@ -1,0 +1,167 @@
+.plans-section {
+    background:  rgba(1, 1, 51, 0.808);
+    border-radius: 8px;
+    padding: 20px 20px;
+    text-align: left; 
+    width: 100%; 
+    max-width: 1300px; 
+    margin: 0 auto; 
+    margin-bottom: 40px;
+  }
+  
+  .plans-header h2 {
+    font-size: 1.0rem;
+    font-weight: bold;
+    color: #ffffff;
+    margin-bottom: 20px;
+    margin-left: 40px;
+  }
+  
+  .plans-header h1 {
+    font-size: 2rem;
+    color: #ffffff; 
+    margin-bottom: 30px;
+    margin-left: 40px;
+  }
+  
+  .plans-container {
+    display: flex;
+    justify-content: space-around; 
+    flex-wrap: wrap; 
+  }
+  
+  .plan-box {
+    background: white; 
+    border-radius: 12px; 
+    padding: 20px;
+    width: 240px; 
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
+    text-align: center; 
+    margin: 10px; 
+    transition: transform 0.3s ease, box-shadow 0.3s ease; 
+    position: relative; 
+  }
+  
+  .plan-box:hover {
+    transform: scale(1.1) rotate(3deg); 
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); 
+  }
+  
+  .plan-box::after {
+    content: ""; 
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(0, 86, 179, 0.2), rgba(255, 255, 255, 0.2)); 
+    border-radius: 12px; 
+    opacity: 0; 
+    transition: opacity 0.3s ease; 
+  }
+  
+  .plan-box:hover::after {
+    opacity: 1; 
+  }
+  
+  .icon-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #e6f0ff; 
+    border-radius: 50%; 
+    width: 70px; 
+    height: 70px; 
+    margin: 0 auto 15px; 
+    transition: background-color 0.3s ease;
+    margin-bottom: 30px;
+  }
+  
+  .plan-box:hover .icon-container {
+    background-color: #0056b3; 
+  }
+  
+  .plan-icon {
+    color: #0056b3; 
+    font-size: 1.5rem; 
+    transition: color 0.3s ease; 
+  }
+  
+  .plan-box:hover .plan-icon {
+    color: white; 
+  }
+  
+  .plan-box h3 {
+    font-size: 1.6rem;
+    margin: 10px 0 5px;
+  }
+  
+
+.desc {
+    font-size: 1rem;
+    color: #555;
+    margin-top: 15px;
+    margin-bottom: 15px;
+  }
+  
+  .price {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333; 
+    margin: 10px 0;
+  }
+  
+  .choose-button {
+    background: linear-gradient(90deg, #91B3FA, #797AE0); 
+    color: #fff;
+    width: 200px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .choose-button:hover {
+    background: linear-gradient(90deg, #18b86d, #045201);
+  color: #fff;
+  }
+  
+  .plans-container {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+  }
+  
+  .plan-box {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    width: 240px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    margin: 10px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+  }
+  
+  .plan-box.popular {
+    border: 2px solid #01f80d; 
+    background: rgba(68, 255, 124, 0.781); 
+    box-shadow: 0 6px 10px rgba(212, 209, 200, 0.507); 
+  }
+  
+  .popular-label {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #1e43e7; 
+    color: white;
+    padding: 5px 10px;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 0.9rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+  
