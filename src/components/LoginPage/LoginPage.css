@@ -6,6 +6,8 @@
     justify-content: center;
     align-items: center;
     font-family: 'Inter'; 
+    padding-top: 80px;
+    padding-bottom: 30px;
 }
 
 .login-container {

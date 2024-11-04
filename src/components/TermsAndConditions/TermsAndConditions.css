@@ -1,10 +1,11 @@
 .terms-container {
     max-width: 800px;
     margin: 40px auto;
-    padding: 20px;
+    padding: 40px;
     background:  rgba(1, 1, 51, 0.808);
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding-top: 50px;
   }
   
   .terms-container h1 {
