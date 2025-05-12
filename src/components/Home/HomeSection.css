@@ -70,7 +70,7 @@
 }
 
 .explore-button {
-  background: linear-gradient(90deg, #797AE0, #18b86d);
+  background: linear-gradient(90deg, #797ae0, #18b86d);
   color: #fff;
   padding: 15px 25px;
   border: none;
@@ -89,7 +89,7 @@
 
 .benefits-section {
   display: flex;
-  justify-content: space-around; 
+  justify-content: space-around;
   background-color: #f4f5f7;
   padding: 40px;
   border-radius: 8px;
@@ -104,24 +104,24 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  background-color: white; 
-  border-radius: 10px; 
+  background-color: white;
+  border-radius: 10px;
   padding: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
-  transition: transform 0.3s, box-shadow 0.3s; 
-  width: 180px; 
-  margin: 10px; 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+  width: 180px;
+  margin: 10px;
 }
 
 .benefit:hover {
-  transform: translateY(-5px); 
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); 
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
 .benefit-icon {
   color: #646cff;
   font-size: 2rem;
-  margin-bottom: 10px; 
+  margin-bottom: 10px;
 }
 
 .benefit h3 {
@@ -144,4 +144,28 @@
     text-align: center;
     max-width: 700px;
   }
+}
+
+/* Variante B do conteúdo da home */
+.home-content.variant-b {
+  background-color: #f0f4ff;
+  border: 2px #a1b8ff;
+  padding: 30px;
+  border-radius: 10px;
+}
+
+.home-content.variant-b h1 {
+  color: #2a2f74;
+  font-size: 2.6rem;
+}
+
+.home-content.variant-b p {
+  color: #465b9f;
+  font-size: 1.05rem;
+}
+
+/* Botão alternativo para variante B */
+.explore-button.alternative {
+  background: linear-gradient(90deg, #18b86d, #005eff);
+  color: #fff;
 }

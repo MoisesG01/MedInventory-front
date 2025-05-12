@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Slider from "react-slick";
 import "./HomeSection.css";
 import { FaStar, FaLock } from "react-icons/fa";
@@ -6,6 +6,73 @@ import { FaCloudArrowUp, FaComputer } from "react-icons/fa6";
 import image4 from "../../assets/images/image_4.png";
 import image5 from "../../assets/images/image_1.webp";
 import image6 from "../../assets/images/image_3.webp";
+
+const HomeContentAB = () => {
+  const [variant, setVariant] = useState(null);
+
+  useEffect(() => {
+    const newVariant = Math.random() < 0.5 ? "A" : "B";
+    setVariant(newVariant);
+  }, []);
+
+  useEffect(() => {
+    if (variant) {
+      window.gtag &&
+        window.gtag("event", "ab_test_view", {
+          test_name: "home_content",
+          variant,
+        });
+    }
+  }, [variant]);
+
+  if (!variant) return null;
+
+  return (
+    <div className={`home-content ${variant === "B" ? "variant-b" : ""}`}>
+      {variant === "A" ? (
+        <>
+          <h1>Gerencie seus ativos com o sistema MedInventory</h1>
+          <p>
+            O software ideal para pequenos e médios negócios. Tenha todos os
+            controles dos seus ativos em um único lugar.
+          </p>
+          <button
+            className="explore-button"
+            onClick={() =>
+              window.gtag &&
+              window.gtag("event", "ab_test_click", {
+                test_name: "home_content",
+                variant: "A",
+              })
+            }
+          >
+            Quero Conhecer
+          </button>
+        </>
+      ) : (
+        <>
+          <h1>Transforme a forma como você gerencia seus ativos</h1>
+          <p>
+            Agilidade, controle e praticidade em um sistema moderno feito para o
+            seu crescimento.
+          </p>
+          <button
+            className="explore-button alternative"
+            onClick={() =>
+              window.gtag &&
+              window.gtag("event", "ab_test_click", {
+                test_name: "home_content",
+                variant: "B",
+              })
+            }
+          >
+            Começar Agora
+          </button>
+        </>
+      )}
+    </div>
+  );
+};
 
 const HomeSection = () => {
   const settings = {
@@ -49,14 +116,7 @@ const HomeSection = () => {
         </Slider>
       </div>
 
-      <div className="home-content">
-        <h1>Gerencie seus ativos com o sistema MedInventory</h1>
-        <p>
-          O software ideal para pequenos e médios negócios. Tenha todos os
-          controles dos seus ativos em um único lugar.
-        </p>
-        <button className="explore-button">Quero Conhecer</button>
-      </div>
+      <HomeContentAB />
 
       <div className="benefits-section">
         <div className="benefit">

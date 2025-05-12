@@ -29,11 +29,11 @@ const Navbar = () => {
       </div>
       <ul className={`navbar-links ${isMenuOpen ? 'active' : ''}`}>
         <li><Link to="/home">Home</Link></li>
-        <li><Link to="/about">About</Link></li>
+        <li><Link to="/home">About</Link></li>
         <li><ScrollLink to="services" smooth={true} duration={500}>Services</ScrollLink></li>
         <li><ScrollLink to="plans" smooth={true} duration={500}>Plans</ScrollLink></li>
-        <li><Link to="/terms">Terms & Conditions</Link></li>
         <li><ScrollLink to="faq" smooth={true} duration={500}>Help</ScrollLink></li>
+        <li><Link to="/terms">Terms & Conditions</Link></li>
       </ul>
       <div className="navbar-buttons">
         <Link to="/signup">
