@@ -38,7 +38,7 @@ const LoginPage = () => {
               <label htmlFor="password">Password</label>
               <div className="input-with-icon">
                 <FaLock className="input-icon" />
-                <input 
+                <input
                   type={showPassword ? "text" : "password"}
                   id="password"
                   placeholder="Enter your password" required
@@ -52,7 +52,7 @@ const LoginPage = () => {
             </div>
             <button type="submit" className="login-btn-in">Log in</button>
           </form>
-          <a href="/forgot-password" className="forgot-password">Forgot your password?</a>
+          <a href="/login" className="forgot-password">Forgot your password?</a>
         </div>
       </div>
     </div>
