@@ -23,8 +23,5 @@ jobs:
         env:
           CI: true
 
-      - name: Esperar app subir
-        run: npx wait-on http://localhost:3000
-
       - name: Rodar Cypress
         run: yarn cypress:run
