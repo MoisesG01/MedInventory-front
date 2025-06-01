@@ -1,53 +1,72 @@
-import React from 'react';
-import { BrowserRouter } from 'react-router-dom';
-import { render, screen } from '@testing-library/react';
-import Navbar from './Navbar';
+import React, { useState } from "react";
+import "./Navbar.css";
+import { FaUser, FaSignInAlt } from "react-icons/fa";
+import { Link, useLocation } from "react-router-dom";
+import { Link as ScrollLink } from "react-scroll";
 
-const renderNavbar = (route = '/') => {
-  window.history.pushState({}, 'Test page', route);
-  render(
-    <BrowserRouter>
-      <Navbar />
-    </BrowserRouter>
+const Navbar = () => {
+  const location = useLocation();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  // Verifica a página atual
+  const isLoginPage = location.pathname === "/login";
+  const isSignupPage = location.pathname === "/signup";
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  return (
+    <nav className="navbar">
+      <div className="navbar-logo">
+        <img src="/logo.png" alt="MedInventory Logo" />
+        <span className="navbar-title">MedInventory</span>
+      </div>
+      <div className="menu-toggle" onClick={toggleMenu}>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+      <ul className={`navbar-links ${isMenuOpen ? "active" : ""}`}>
+        <li>
+          <Link to="/home">Home</Link>
+        </li>
+        <li>
+          <Link to="/home">About</Link>
+        </li>
+        <li>
+          <ScrollLink to="services" smooth={true} duration={500}>
+            Services
+          </ScrollLink>
+        </li>
+        <li>
+          <ScrollLink to="plans" smooth={true} duration={500}>
+            Plans
+          </ScrollLink>
+        </li>
+        <li>
+          <ScrollLink to="faq" smooth={true} duration={500}>
+            Help
+          </ScrollLink>
+        </li>
+        <li>
+          <Link to="/terms">Terms & Conditions</Link>
+        </li>
+      </ul>
+      <div className="navbar-buttons">
+        <Link to="/signup">
+          <button className={`signup-btn ${isSignupPage ? "active" : ""}`}>
+            <FaUser Alt /> SIGNUP
+          </button>
+        </Link>
+        <Link to="/login">
+          <button className={`login-btn ${isLoginPage ? "active" : ""}`}>
+            <FaSignInAlt /> LOGIN
+          </button>
+        </Link>
+      </div>
+    </nav>
   );
 };
 
-describe('Navbar', () => {
-  it('renderiza o logo e o nome', () => {
-    renderNavbar();
-    expect(screen.getByAltText('MedInventory Logo')).toBeInTheDocument();
-    expect(screen.getByText('MedInventory')).toBeInTheDocument();
-  });
-
-  it('renderiza links principais', () => {
-    renderNavbar();
-    expect(screen.getByText(/Home/i)).toBeInTheDocument();
-    expect(screen.getByText(/About/i)).toBeInTheDocument();
-    expect(screen.getByText(/Terms & Conditions/i)).toBeInTheDocument();
-  });
-
-  it('renderiza links via react-scroll', () => {
-    renderNavbar();
-    expect(screen.getByText(/Services/i)).toBeInTheDocument();
-    expect(screen.getByText(/Plans/i)).toBeInTheDocument();
-    expect(screen.getByText(/Help/i)).toBeInTheDocument();
-  });
-
-  it('renderiza botões de login e signup', () => {
-    renderNavbar();
-    expect(screen.getByText(/SIGNUP/i)).toBeInTheDocument();
-    expect(screen.getByText(/LOGIN/i)).toBeInTheDocument();
-  });
-
-  it('aplica classe ativa no botão de login se estiver na rota /login', () => {
-    renderNavbar('/login');
-    const loginButton = screen.getByText(/LOGIN/i);
-    expect(loginButton.className).toMatch(/active/);
-  });
-
-  it('aplica classe ativa no botão de signup se estiver na rota /signup', () => {
-    renderNavbar('/signup');
-    const signupButton = screen.getByText(/SIGNUP/i);
-    expect(signupButton.className).toMatch(/active/);
-  });
-});
+export default Navbar;

@@ -1,12 +1,19 @@
-import React from 'react';
-import './ServicesSection.css';
-import { FaCog, FaUsers, FaClipboardCheck, FaSearchLocation } from 'react-icons/fa';
+import "./ServicesSection.css";
+import {
+  FaCog,
+  FaUsers,
+  FaClipboardCheck,
+  FaSearchLocation,
+} from "react-icons/fa";
 
 const ServicesSection = () => (
   <section id="services" className="services-section">
     <div className="services-header">
       <h2>Serviços</h2>
-      <h1>O sistema de gestão MedInventory é completo para atender diversos segmentos do setor da saúde.</h1>
+      <h1>
+        O sistema de gestão MedInventory é completo para atender diversos
+        segmentos do setor da saúde.
+      </h1>
     </div>
     <div className="services-container">
       <div className="service-box">

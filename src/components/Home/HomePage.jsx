@@ -1,4 +1,3 @@
-import React from 'react';
 import HomeSection from './HomeSection';
 import ServicesSection from './ServicesSection';
 import PlansSection from './PlansSection';
