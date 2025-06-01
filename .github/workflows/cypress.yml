@@ -1,0 +1,27 @@
+name: Cypress E2E Tests
+
+on: [push, pull_request]
+
+jobs:
+  cypress-run:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v3
+
+      - name: Instalar Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Instalar dependências
+        run: yarn install
+
+      - name: Start app (modo dev)
+        run: yarn start &
+        env:
+          CI: true
+
+      - name: Rodar Cypress
+        run: yarn cypress:run
