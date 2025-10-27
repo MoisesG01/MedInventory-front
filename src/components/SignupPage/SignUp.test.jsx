@@ -1,56 +1,61 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
+import { BrowserRouter } from 'react-router-dom';
 import SignUp from './SignupPage';
 
 describe('SignupPage', () => {
   beforeEach(() => {
-    render(<SignUp />);
+    render(
+      <BrowserRouter>
+        <SignUp />
+      </BrowserRouter>
+    );
   });
 
   it('renderiza título e botão principal', () => {
-    expect(screen.getByText(/Create an account/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Create Account/i })).toBeInTheDocument();
+    expect(screen.getByText(/Criar Conta/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Criar Conta/i })).toBeInTheDocument();
   });
 
   it('renderiza campos de entrada obrigatórios', () => {
-    expect(screen.getByPlaceholderText(/Enter your first name/i)).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(/Enter your last name/i)).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(/Enter your email/i)).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(/Enter your contact number/i)).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(/Enter your password/i)).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(/Confirm your password/i)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/Digite seu nome/i)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/Digite seu sobrenome/i)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/Digite seu email/i)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/Digite seu número/i)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/Digite sua senha/i)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/Confirme sua senha/i)).toBeInTheDocument();
   });
 
   it('inicialmente mostra os pontos de força de senha desativados', () => {
-    const dots = document.querySelectorAll('.signup-strength-dot');
-    expect(dots.length).toBe(4);
-    dots.forEach(dot => {
-      expect(dot.classList.contains('strong')).toBe(false);
+    const segments = document.querySelectorAll('.signup-strength-segment');
+    expect(segments.length).toBe(5);
+    segments.forEach(segment => {
+      expect(segment.style.backgroundColor).toBe('');
     });
   });
 
   it('atualiza a força da senha conforme os critérios', () => {
-    const passwordInput = screen.getByPlaceholderText(/Enter your password/i);
+    const passwordInput = screen.getByPlaceholderText(/Digite sua senha/i);
 
     fireEvent.change(passwordInput, { target: { value: 'abc' } });
-    let dots = document.querySelectorAll('.signup-strength-dot');
-    expect(dots[0].classList.contains('strong')).toBe(false);
+    let segments = document.querySelectorAll('.signup-strength-segment');
+    expect(segments[0].style.backgroundColor).toBe('');
 
-    fireEvent.change(passwordInput, { target: { value: 'Abcdef1!' } });
-    dots = document.querySelectorAll('.signup-strength-dot');
-    dots.forEach(dot => {
-      expect(dot.classList.contains('strong')).toBe(true);
+    fireEvent.change(passwordInput, { target: { value: 'Abcdef1!Gt' } });
+    segments = document.querySelectorAll('.signup-strength-segment');
+    segments.forEach(segment => {
+      expect(segment.style.backgroundColor).not.toBe('');
     });
   });
 
   it('renderiza os ícones de signup via Google e Email', () => {
-    const icons = document.querySelectorAll('.signup-sign-up-via-icons .icon');
-    expect(icons.length).toBe(2);
+    expect(screen.getByText(/Continuar com Google/i)).toBeInTheDocument();
+    expect(screen.getByText(/Criar conta com email/i)).toBeInTheDocument();
   });
 
   it('renderiza o link para login', () => {
-    expect(screen.getByText(/Already have an account/i)).toBeInTheDocument();
-    const link = screen.getByRole('link', { name: /Log in/i });
+    expect(screen.getByText(/Já tem uma conta?/i)).toBeInTheDocument();
+    const link = screen.getByRole('link', { name: /Entrar/i });
     expect(link).toHaveAttribute('href', '/login');
   });
 });

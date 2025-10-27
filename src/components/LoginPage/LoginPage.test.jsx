@@ -9,6 +9,6 @@ describe('LoginPage', () => {
   });
 
   it('valida que o botão de login está presente', () => {
-    expect(screen.getByRole('button', { name: /Log in/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Entrar/i })).toBeInTheDocument();
   });
 });
