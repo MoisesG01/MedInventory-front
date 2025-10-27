@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import {
   FaEnvelope,
   FaEye,
@@ -6,13 +7,54 @@ import {
   FaGoogle,
   FaLock,
 } from "react-icons/fa";
+import { useAuth } from "../../contexts/AuthContext";
 import "./LoginPage.css";
 
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const { login, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+
+  // Redirecionar se já estiver autenticado
+  React.useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/home");
+    }
+  }, [isAuthenticated, navigate]);
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+
+    if (!username || !password) {
+      setError("Por favor, preencha todos os campos");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      await login(username, password);
+      // O redirecionamento é feito automaticamente pelo AuthContext
+    } catch (err) {
+      if (err.message) {
+        setError(err.message);
+      } else if (Array.isArray(err)) {
+        setError(err.join(", "));
+      } else {
+        setError("Erro ao fazer login. Verifique suas credenciais.");
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -20,37 +62,58 @@ const LoginPage = () => {
       <div className="login-container">
         <div className="signup-section">
           <h2>Criar Conta</h2>
-          <button className="google-btn">
-            <FaGoogle /> Continuar com Google
-          </button>
-          <button className="email-btn">
-            {" "}
-            <FaEnvelope /> Criar conta com email
-          </button>
+          <Link to="/signup" className="google-btn-link">
+            <button className="google-btn">
+              <FaGoogle /> Continuar com Google
+            </button>
+          </Link>
+          <Link to="/signup" className="email-btn-link">
+            <button className="email-btn">
+              {" "}
+              <FaEnvelope /> Criar conta com email
+            </button>
+          </Link>
           <p>
             Ao se cadastrar, você concorda com os{" "}
-            <a className="term" href="/terms">
+            <Link className="term" to="/terms">
               Termos de Serviço
-            </a>{" "}
+            </Link>{" "}
             e reconhece que leu nossa{" "}
-            <a className="term" href="/terms">
+            <Link className="term" to="/terms">
               Política de Privacidade
-            </a>
+            </Link>
             .
           </p>
         </div>
         <div className="divider"></div>
         <div className="login-section">
           <h2>Entrar</h2>
-          <form>
+          {error && (
+            <div
+              style={{
+                color: "#ef4444",
+                marginBottom: "1rem",
+                padding: "0.75rem",
+                backgroundColor: "#fee2e2",
+                borderRadius: "8px",
+                fontSize: "0.875rem",
+              }}
+            >
+              {error}
+            </div>
+          )}
+          <form onSubmit={handleSubmit}>
             <div className="input-group">
               <div className="input-with-icon">
                 <FaEnvelope className="input-icon" />
                 <input
-                  type="email"
-                  id="email"
-                  placeholder="Digite seu email"
+                  type="text"
+                  id="username"
+                  placeholder="Nome de usuário"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
                   required
+                  disabled={loading}
                 />
               </div>
             </div>
@@ -61,7 +124,10 @@ const LoginPage = () => {
                   type={showPassword ? "text" : "password"}
                   id="password"
                   placeholder="Digite sua senha"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   required
+                  disabled={loading}
                 />
                 {showPassword ? (
                   <FaEye
@@ -76,8 +142,12 @@ const LoginPage = () => {
                 )}
               </div>
             </div>
-            <button type="submit" className="login-btn-in">
-              Entrar
+            <button
+              type="submit"
+              className="login-btn-in"
+              disabled={loading}
+            >
+              {loading ? "Entrando..." : "Entrar"}
             </button>
           </form>
           <a href="/login" className="forgot-password">
