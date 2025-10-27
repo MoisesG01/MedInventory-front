@@ -1,30 +1,48 @@
-import React, { useState } from 'react';
-import './TermsAndConditions.css';
+import React, { useState } from "react";
+import "./TermsAndConditions.css";
+import {
+  FaScroll,
+  FaShieldAlt,
+  FaFileContract,
+  FaInfoCircle,
+} from "react-icons/fa";
 
 const termsData = [
   {
-    title: "Introduction",
-    content: "Welcome to MedInventory. By accessing or using our service, you agree to be bound by these terms and conditions. Please read them carefully before proceeding."
+    icon: <FaScroll />,
+    title: "Introdução",
+    content:
+      "Bem-vindo ao MedInventory. Ao acessar ou usar nosso serviço, você concorda em ficar vinculado a estes termos e condições. Por favor, leia-os cuidadosamente antes de prosseguir. Nossa plataforma é projetada para fornecer soluções completas de gerenciamento de inventário para instalações de saúde e instituições médicas.",
   },
   {
-    title: "Use of Service",
-    content: "You are responsible for any activity that occurs under your account. Ensure that your use complies with all applicable laws. Unauthorized use or abuse of our services will lead to immediate termination."
+    icon: <FaShieldAlt />,
+    title: "Uso do Serviço",
+    content:
+      "Você é responsável por qualquer atividade que ocorra em sua conta. Certifique-se de que seu uso está em conformidade com todas as leis e regulamentos aplicáveis. Uso não autorizado ou abuso de nossos serviços levará à rescisão imediata. Os usuários devem manter padrões éticos e respeitar os direitos de propriedade intelectual.",
   },
   {
-    title: "Account Responsibilities",
-    content: "You must maintain the confidentiality of your account and password. Notify us immediately if there is any unauthorized use of your account. We are not responsible for any losses caused by unauthorized use of your account."
+    icon: <FaFileContract />,
+    title: "Responsabilidades da Conta",
+    content:
+      "Você deve manter a confidencialidade das credenciais e senha de sua conta. Notifique-nos imediatamente se houver qualquer uso não autorizado de sua conta. Não somos responsáveis por quaisquer perdas causadas por acesso não autorizado. Atualizações regulares de segurança e alterações de senha são recomendadas.",
   },
   {
-    title: "Limitations of Liability",
-    content: "MedInventory will not be liable for any indirect, incidental, or consequential damages arising from your use of our services. We provide no warranties as to the performance or outcomes from using our software."
+    icon: <FaInfoCircle />,
+    title: "Limitações de Responsabilidade",
+    content:
+      "O MedInventory não será responsável por quaisquer danos indiretos, incidentais ou consequenciais decorrentes do uso de nossos serviços. Não fornecemos garantias quanto ao desempenho ou resultados da utilização de nosso software. Os usuários reconhecem que a disponibilidade do sistema pode variar e os períodos de manutenção são agendados conforme necessário.",
   },
   {
-    title: "Modifications to Terms",
-    content: "We reserve the right to modify these terms at any time. Continued use of the service implies acceptance of the modified terms. Please review this page periodically for updates."
+    icon: <FaScroll />,
+    title: "Modificações nos Termos",
+    content:
+      "Reservamo-nos o direito de modificar estes termos a qualquer momento. O uso continuado do serviço implica na aceitação dos termos modificados. Por favor, revise esta página periodicamente para atualizações. Notificações de alterações significativas serão fornecidas através de nossos canais de comunicação.",
   },
   {
-    title: "Termination",
-    content: "MedInventory may terminate your access if you breach these terms. Upon termination, your rights to use our services will cease immediately."
+    icon: <FaShieldAlt />,
+    title: "Rescisão",
+    content:
+      "O MedInventory pode encerrar seu acesso se você violar estes termos. Com a rescisão, seus direitos de usar nossos serviços cessarão imediatamente. Opções de exportação de dados podem estar disponíveis durante um período de carência após a rescisão, sujeito às nossas políticas de retenção de dados.",
   },
 ];
 
@@ -36,19 +54,66 @@ const TermsAndConditions = () => {
   };
 
   return (
-    <div className="terms-container">
-      <h1>Terms & Conditions</h1>
-      <p>Please read our terms and conditions carefully before using MedInventory.</p>
-
-      {termsData.map((section, index) => (
-        <div
-          key={index}
-          className={`terms-section ${expandedSection === index ? 'expanded' : ''}`}
-        >
-          <h2 onClick={() => toggleSection(index)}>{section.title}</h2>
-          {expandedSection === index && <p>{section.content}</p>}
+    <div className="terms-page">
+      <div className="terms-hero">
+        <div className="terms-icon-wrapper">
+          <FaScroll className="terms-hero-icon" />
         </div>
-      ))}
+        <h1>Termos e Condições</h1>
+        <p className="terms-subtitle">
+          Por favor, leia nossos termos e condições cuidadosamente antes de usar
+          o MedInventory. Este documento descreve os direitos e
+          responsabilidades de todas as partes envolvidas.
+        </p>
+        <div className="terms-meta">
+          <span>Última Atualização: Janeiro 2024</span>
+          <span>Versão 2.0</span>
+        </div>
+      </div>
+
+      <div className="terms-container">
+        {termsData.map((section, index) => (
+          <div
+            key={index}
+            className={`terms-section ${
+              expandedSection === index ? "expanded" : ""
+            }`}
+          >
+            <div
+              className="terms-section-header"
+              onClick={() => toggleSection(index)}
+            >
+              <div className="terms-icon">{section.icon}</div>
+              <div className="terms-section-content-wrapper">
+                <h2>{section.title}</h2>
+                <div
+                  className={`terms-indicator ${
+                    expandedSection === index ? "expanded" : ""
+                  }`}
+                >
+                  {expandedSection === index
+                    ? "Ocultar Detalhes"
+                    : "Mostrar Detalhes"}
+                </div>
+              </div>
+            </div>
+            <div
+              className={`terms-section-body ${
+                expandedSection === index ? "visible" : ""
+              }`}
+            >
+              <p>{section.content}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="terms-footer">
+        <p>
+          Para dúvidas ou preocupações sobre estes termos, entre em contato
+          conosco em legal@medinventory.com
+        </p>
+      </div>
     </div>
   );
 };

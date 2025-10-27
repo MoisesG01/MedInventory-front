@@ -1,163 +1,346 @@
-/* Navbar.css */
+/* ============================================
+   NAVBAR COMPONENT
+   ============================================ */
 .navbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 20px;
-  background-color: #151D20;
-  position: fixed; /* Fixa a navbar no topo */
+  padding: var(--spacing-md) var(--spacing-xl);
+  background-color: var(--color-bg-dark-secondary);
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  z-index: 1000; /* Garante que a navbar fique acima de outros elementos */
+  z-index: var(--z-index-navbar);
+  height: var(--navbar-height);
+  box-shadow: var(--shadow-md);
+  transition: all var(--transition-base);
 }
 
+/* Logo Section */
 .navbar-logo {
-  padding-left: 10px;
   display: flex;
   align-items: center;
+  gap: var(--spacing-sm);
+  z-index: 1001;
 }
 
 .navbar-logo img {
   height: 40px;
-  margin-right: 10px;
+  width: auto;
+  object-fit: contain;
+  transition: transform var(--transition-base);
+}
+
+.navbar-logo:hover img {
+  transform: scale(1.05);
 }
 
 .navbar-title {
-  font-family: 'Inter';
-  font-size: 24px;
-  letter-spacing: 5px;
-  font-weight: bold;
-  color: #fff;
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 4px;
+  color: var(--color-text-light);
+  text-transform: uppercase;
 }
 
+/* Navigation Links */
 .navbar-links {
   display: flex;
   list-style: none;
+  gap: var(--spacing-md);
+  align-items: center;
 }
 
 .navbar-links li {
-  margin: 0 15px;
+  margin: 0;
 }
 
 .navbar-links a {
-  font-family: 'Inter';
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
   text-decoration: none;
-  color: #ffffff;
+  color: var(--color-text-light);
   position: relative;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  transition: color var(--transition-base);
+  cursor: pointer;
+  display: inline-block;
+}
+
+/* Estilo para ScrollLink (react-scroll) */
+.navbar-links a[href^="#"] {
+  cursor: pointer;
+}
+
+.navbar-links a:hover {
+  color: var(--color-primary-light);
+}
+
+.navbar-links a::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%) scaleX(0);
+  width: 100%;
+  height: 2px;
+  background-color: var(--color-primary-light);
+  transition: transform var(--transition-base);
 }
 
 .navbar-links a:hover::after {
-  content: '';
-  display: block;
-  width: 100%;
-  height: 2px;
-  background-color: #faf8f8;
-  position: absolute;
-  bottom: -2px;
-  left: 0;
+  transform: translateX(-50%) scaleX(1);
 }
 
+/* Scroll Links (spans com onClick) */
+.navbar-links .scroll-link {
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  text-decoration: none;
+  color: var(--color-text-light);
+  position: relative;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  transition: color var(--transition-base);
+  cursor: pointer;
+  display: inline-block;
+}
+
+.navbar-links .scroll-link:hover {
+  color: var(--color-primary-light);
+}
+
+.navbar-links .scroll-link::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%) scaleX(0);
+  width: 100%;
+  height: 2px;
+  background-color: var(--color-primary-light);
+  transition: transform var(--transition-base);
+}
+
+.navbar-links .scroll-link:hover::after {
+  transform: translateX(-50%) scaleX(1);
+}
+
+/* Action Buttons */
 .navbar-buttons {
-  display: flex; 
+  display: flex;
   align-items: center;
-  padding-right: 20px;
+  gap: var(--spacing-sm);
 }
 
 .navbar-buttons button {
-  margin: 0 10px; 
-  padding: 10px 20px;
-  border: none;
-  background-color: #333;
-  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border: 1px solid transparent;
+  background-color: var(--color-text-secondary);
+  color: var(--color-text-light);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  border-radius: var(--radius-md);
   cursor: pointer;
-  border-radius: 5px;
-  align-items: center; 
+  transition: all var(--transition-base);
 }
 
 .navbar-buttons button:hover {
-  background-color: #f0efef;
-  color: #333 ;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: var(--color-primary-light);
+  transform: translateY(-2px);
 }
 
-.signup-btn {
-  background-color: #333;
-  color: #fff;
-}
-
+.signup-btn,
 .login-btn {
-  background-color: #333;
-  color: #fff;
+  background-color: transparent;
+  color: var(--color-text-light);
 }
 
-.signup-btn:hover {
-  background-color: #f0efef;
-  color: #333;
-}
-
+.signup-btn:hover,
 .login-btn:hover {
-  background-color: #f0efef;
-  color: #333;
+  background-color: var(--color-text-light);
+  color: var(--color-bg-dark-secondary);
 }
 
-.signup-btn.active {
-  background-color: #f0efef;
-  color: #333;
-}
-
+.signup-btn.active,
 .login-btn.active {
-  background-color: #f0efef;
-  color: #333;
+  background-color: var(--color-text-light);
+  color: var(--color-bg-dark-secondary);
 }
 
-/* Menu Toggle */
+/* Menu Toggle (Mobile) */
 .menu-toggle {
   display: none;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 1001;
+  transition: transform var(--transition-fast);
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
+.menu-toggle:hover {
+  transform: scale(1.1);
+}
+
+.menu-toggle div {
+  width: 100%;
+  height: 3px;
+  background-color: var(--color-text-light);
+  border-radius: var(--radius-full);
+  transition: all var(--transition-base);
+}
+
+/* Active state for hamburger menu */
+.menu-toggle.active div:nth-child(1) {
+  transform: rotate(45deg) translate(8px, 8px);
+}
+
+.menu-toggle.active div:nth-child(2) {
+  opacity: 0;
+}
+
+.menu-toggle.active div:nth-child(3) {
+  transform: rotate(-45deg) translate(7px, -7px);
+}
+
+/* ============================================
+   RESPONSIVE DESIGN - TABLET
+   ============================================ */
+@media (max-width: 1024px) {
+  .navbar {
+    padding: var(--spacing-md);
+  }
+
   .navbar-links {
-      display: none;
+    gap: var(--spacing-sm);
   }
-  .navbar-buttons {
-      display: none;
+
+  .navbar-links a {
+    font-size: var(--font-size-sm);
+    padding: var(--spacing-xs);
   }
+
+  .navbar-buttons button {
+    padding: var(--spacing-xs) var(--spacing-md);
+    font-size: var(--font-size-xs);
+  }
+}
+
+/* ============================================
+   RESPONSIVE DESIGN - MOBILE
+   ============================================ */
+@media (max-width: 768px) {
+  .navbar {
+    padding: var(--spacing-md) var(--spacing-lg);
+  }
+
+  .navbar-title {
+    font-size: var(--font-size-lg);
+    letter-spacing: 2px;
+  }
+
   .menu-toggle {
-      display: block;
-      cursor: pointer;
+    display: flex;
   }
-  .menu-toggle div {
-      width: 30px;
-      height: 3px;
-      background-color: #fff;
-      margin: 5px;
+
+  .navbar-links,
+  .navbar-buttons {
+    position: fixed;
+    top: var(--navbar-height);
+    left: 0;
+    right: 0;
+    background-color: var(--color-bg-dark-secondary);
+    flex-direction: column;
+    padding: var(--spacing-xl);
+    box-shadow: var(--shadow-lg);
+    transform: translateX(100%);
+    opacity: 0;
+    visibility: hidden;
+    transition: all var(--transition-base);
   }
-  .navbar-links.active {
-      display: block;
-      position: absolute;
-      top: 60px;
-      left: 0;
-      right: 0;
-      background-color: #151D20;
-      padding: 20px;
-  }
-  .navbar-links.active li {
-      margin: 10px;
-  }
-  .navbar-links.active a {
-      color: #fff;
-  }
+
+  .navbar-links.active,
   .navbar-buttons.active {
-      display: block;
-      position: absolute;
-      top: 200px;
-      left: 0;
-      right: 0;
-      background-color: #151D20;
-      padding: 20px;
+    transform: translateX(0);
+    opacity: 1;
+    visibility: visible;
   }
-  .navbar-buttons.active button {
-      margin: 10px;
+
+  .navbar-links {
+    top: var(--navbar-height);
+    gap: 0;
+  }
+
+  .navbar-buttons {
+    top: calc(var(--navbar-height) + 250px);
+    gap: var(--spacing-md);
+  }
+
+  .navbar-links li {
+    width: 100%;
+    margin: 0;
+    padding: var(--spacing-xs) 0;
+  }
+
+  .navbar-links a {
+    display: block;
+    padding: var(--spacing-md);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-base);
+  }
+
+  .navbar-links a::after {
+    display: none;
+  }
+
+  .navbar-links a:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--color-primary-light);
+  }
+
+  .navbar-buttons button {
+    width: 100%;
+    justify-content: center;
+    padding: var(--spacing-md);
+  }
+}
+
+/* ============================================
+   RESPONSIVE DESIGN - SMALL MOBILE
+   ============================================ */
+@media (max-width: 480px) {
+  .navbar {
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+
+  .navbar-logo img {
+    height: 32px;
+  }
+
+  .navbar-title {
+    font-size: var(--font-size-base);
+    letter-spacing: 1px;
+  }
+
+  .menu-toggle {
+    width: 28px;
+    height: 28px;
+  }
+
+  .navbar-links,
+  .navbar-buttons {
+    padding: var(--spacing-lg);
   }
 }
