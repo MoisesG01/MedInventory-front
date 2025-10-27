@@ -127,8 +127,11 @@ const SignUp = () => {
       };
 
       await register(userData);
-      toast.success("Conta criada com sucesso!");
-      // O redirecionamento é feito automaticamente pelo AuthContext
+      toast.success("Conta criada com sucesso! Faça login para continuar.");
+      // Redirecionar para a página de login após 2 segundos
+      setTimeout(() => {
+        navigate("/login");
+      }, 2000);
     } catch (err) {
       let errorMessage = "Erro ao criar conta. Tente novamente.";
 

@@ -59,8 +59,7 @@ export const AuthProvider = ({ children }) => {
       setError(null);
       setLoading(true);
       const response = await authService.register(userData);
-      setUser(response.user);
-      navigate("/home");
+      // Não define usuário nem navega - redirecionamento é feito na página
       return response;
     } catch (err) {
       const errorMessage = err.message || "Erro ao registrar";

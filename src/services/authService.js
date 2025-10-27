@@ -5,10 +5,7 @@ const authService = {
   async register(userData) {
     try {
       const response = await api.post("/auth/register", userData);
-      if (response.data.access_token) {
-        localStorage.setItem("token", response.data.access_token);
-        localStorage.setItem("user", JSON.stringify(response.data.user));
-      }
+      // Não salva token no localStorage - usuário precisa fazer login separadamente
       return response.data;
     } catch (error) {
       throw error.response?.data || error;
