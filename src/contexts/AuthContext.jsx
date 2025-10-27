@@ -1,6 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
 import authService from "../services/authService";
-import { useNavigate } from "react-router-dom";
 
 const AuthContext = createContext({});
 
@@ -16,7 +15,6 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const navigate = useNavigate();
 
   // Carregar usuário do localStorage ao iniciar
   useEffect(() => {
@@ -42,7 +40,6 @@ export const AuthProvider = ({ children }) => {
       setLoading(true);
       const response = await authService.login(username, password);
       setUser(response.user);
-      navigate("/home");
       return response;
     } catch (err) {
       const errorMessage = err.message || "Erro ao fazer login";
@@ -74,7 +71,6 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     authService.logout();
     setUser(null);
-    navigate("/login");
   };
 
   const value = {

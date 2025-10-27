@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import "./Navbar.css";
 import { FaUser, FaSignInAlt, FaSignOutAlt } from "react-icons/fa";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 
 const Navbar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { isAuthenticated, user, logout } = useAuth();
 
@@ -62,6 +63,7 @@ const Navbar = () => {
   const handleLogout = () => {
     logout();
     closeMenu();
+    navigate("/login");
   };
 
   return (

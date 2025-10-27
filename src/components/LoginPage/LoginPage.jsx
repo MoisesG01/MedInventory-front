@@ -43,7 +43,7 @@ const LoginPage = () => {
     try {
       await login(username, password);
       toast.success("Login realizado com sucesso!");
-      // O redirecionamento é feito automaticamente pelo AuthContext
+      navigate("/home");
     } catch (err) {
       let errorMessage = "Erro ao fazer login. Verifique suas credenciais.";
 
