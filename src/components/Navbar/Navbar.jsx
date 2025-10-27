@@ -63,7 +63,7 @@ const Navbar = () => {
   const handleLogout = () => {
     logout();
     closeMenu();
-    navigate("/login");
+    navigate("/home");
   };
 
   return (

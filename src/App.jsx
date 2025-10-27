@@ -14,7 +14,6 @@ import LoginPage from "./components/LoginPage/LoginPage";
 import SignupPage from "./components/SignupPage/SignupPage";
 import HomePage from "./components/Home/HomePage";
 import TermsAndConditions from "./components/TermsAndConditions/TermsAndConditions";
-import ProtectedRoute from "./components/ProtectedRoute";
 import "./index.css";
 
 function App() {
@@ -27,14 +26,7 @@ function App() {
             <Route path="/" element={<Navigate to="/home" replace />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
-            <Route
-              path="/home"
-              element={
-                <ProtectedRoute>
-                  <HomePage />
-                </ProtectedRoute>
-              }
-            />
+            <Route path="/home" element={<HomePage />} />
             <Route path="/terms" element={<TermsAndConditions />} />
           </Routes>
           <Footer />
