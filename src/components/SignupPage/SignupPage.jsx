@@ -13,12 +13,13 @@ import {
 } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
+import { toast } from "react-toastify";
 import "./SignupPage.css";
 
 const SignUp = () => {
   const { register, isAuthenticated } = useAuth();
   const navigate = useNavigate();
-  
+
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -32,7 +33,6 @@ const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
-  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   // Redirecionar se já estiver autenticado
@@ -91,21 +91,26 @@ const SignUp = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
 
     // Validações
-    if (!formData.firstName || !formData.username || !formData.email || !password || !acceptedTerms) {
-      setError("Por favor, preencha todos os campos obrigatórios");
+    if (
+      !formData.firstName ||
+      !formData.username ||
+      !formData.email ||
+      !password ||
+      !acceptedTerms
+    ) {
+      toast.error("Por favor, preencha todos os campos obrigatórios");
       return;
     }
 
     if (!passwordsMatch) {
-      setError("As senhas não coincidem");
+      toast.error("As senhas não coincidem");
       return;
     }
 
     if (passwordStrength < 5) {
-      setError("A senha deve atender a todos os critérios de segurança");
+      toast.error("A senha deve atender a todos os critérios de segurança");
       return;
     }
 
@@ -122,10 +127,11 @@ const SignUp = () => {
       };
 
       await register(userData);
+      toast.success("Conta criada com sucesso!");
       // O redirecionamento é feito automaticamente pelo AuthContext
     } catch (err) {
       let errorMessage = "Erro ao criar conta. Tente novamente.";
-      
+
       if (err.message) {
         errorMessage = err.message;
       } else if (Array.isArray(err)) {
@@ -133,8 +139,8 @@ const SignUp = () => {
       } else if (typeof err === "object" && err.statusCode === 409) {
         errorMessage = "Usuário ou email já cadastrado";
       }
-      
-      setError(errorMessage);
+
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -152,21 +158,6 @@ const SignUp = () => {
 
         <div className="signup-content">
           <div className="signup-form-section">
-            {error && (
-              <div
-                style={{
-                  color: "#ef4444",
-                  marginBottom: "1rem",
-                  padding: "0.75rem",
-                  backgroundColor: "#fee2e2",
-                  borderRadius: "8px",
-                  fontSize: "0.875rem",
-                }}
-              >
-                {error}
-              </div>
-            )}
-            
             <form onSubmit={handleSubmit}>
               <div className="signup-fields">
                 <div className="signup-field">
@@ -253,7 +244,7 @@ const SignUp = () => {
                       <span
                         onClick={toggleShowPassword}
                         className="signup-toggle-password"
-                        style={{ cursor: loading ? 'not-allowed' : 'pointer' }}
+                        style={{ cursor: loading ? "not-allowed" : "pointer" }}
                       >
                         {showPassword ? <FaEyeSlash /> : <FaEye />}
                       </span>
@@ -277,7 +268,7 @@ const SignUp = () => {
                       <span
                         onClick={toggleShowConfirmPassword}
                         className="signup-toggle-password"
-                        style={{ cursor: loading ? 'not-allowed' : 'pointer' }}
+                        style={{ cursor: loading ? "not-allowed" : "pointer" }}
                       >
                         {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
                       </span>
@@ -312,7 +303,9 @@ const SignUp = () => {
                   </div>
                   <span
                     className="signup-strength-label"
-                    style={{ color: getPasswordStrengthColor(passwordStrength) }}
+                    style={{
+                      color: getPasswordStrengthColor(passwordStrength),
+                    }}
                   >
                     {getPasswordStrengthLabel(passwordStrength)}
                   </span>
@@ -402,7 +395,10 @@ const SignUp = () => {
                     : ""
                 }`}
                 disabled={
-                  !acceptedTerms || !passwordsMatch || passwordStrength < 5 || loading
+                  !acceptedTerms ||
+                  !passwordsMatch ||
+                  passwordStrength < 5 ||
+                  loading
                 }
               >
                 {loading ? "Criando conta..." : "Criar Conta"}
@@ -414,7 +410,11 @@ const SignUp = () => {
             </div>
 
             <div className="signup-social-login">
-              <button type="button" className="signup-social-button" disabled={loading}>
+              <button
+                type="button"
+                className="signup-social-button"
+                disabled={loading}
+              >
                 <FaGoogle className="signup-social-icon" />
                 Continuar com Google
               </button>

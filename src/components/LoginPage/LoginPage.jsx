@@ -8,13 +8,13 @@ import {
   FaLock,
 } from "react-icons/fa";
 import { useAuth } from "../../contexts/AuthContext";
+import { toast } from "react-toastify";
 import "./LoginPage.css";
 
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const { login, isAuthenticated } = useAuth();
   const navigate = useNavigate();
@@ -32,26 +32,28 @@ const LoginPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
     setLoading(true);
 
     if (!username || !password) {
-      setError("Por favor, preencha todos os campos");
+      toast.error("Por favor, preencha todos os campos");
       setLoading(false);
       return;
     }
 
     try {
       await login(username, password);
+      toast.success("Login realizado com sucesso!");
       // O redirecionamento é feito automaticamente pelo AuthContext
     } catch (err) {
+      let errorMessage = "Erro ao fazer login. Verifique suas credenciais.";
+      
       if (err.message) {
-        setError(err.message);
+        errorMessage = err.message;
       } else if (Array.isArray(err)) {
-        setError(err.join(", "));
-      } else {
-        setError("Erro ao fazer login. Verifique suas credenciais.");
+        errorMessage = err.join(", ");
       }
+      
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -88,20 +90,6 @@ const LoginPage = () => {
         <div className="divider"></div>
         <div className="login-section">
           <h2>Entrar</h2>
-          {error && (
-            <div
-              style={{
-                color: "#ef4444",
-                marginBottom: "1rem",
-                padding: "0.75rem",
-                backgroundColor: "#fee2e2",
-                borderRadius: "8px",
-                fontSize: "0.875rem",
-              }}
-            >
-              {error}
-            </div>
-          )}
           <form onSubmit={handleSubmit}>
             <div className="input-group">
               <div className="input-with-icon">

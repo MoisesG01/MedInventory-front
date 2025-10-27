@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import "./Navbar.css";
-import { FaUser, FaSignInAlt } from "react-icons/fa";
+import { FaUser, FaSignInAlt, FaSignOutAlt } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
 
 const Navbar = () => {
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { isAuthenticated, user, logout } = useAuth();
 
   // Verifica a página atual
   const isLoginPage = location.pathname === "/login";
@@ -57,6 +59,11 @@ const Navbar = () => {
     }
   };
 
+  const handleLogout = () => {
+    logout();
+    closeMenu();
+  };
+
   return (
     <nav className="navbar">
       <div className="navbar-logo">
@@ -73,54 +80,73 @@ const Navbar = () => {
         <div></div>
       </div>
       <ul className={`navbar-links ${isMenuOpen ? "active" : ""}`}>
-        <li>
-          <Link to="/home" onClick={handleNavigation}>
-            Home
-          </Link>
-        </li>
-        <li>
-          <Link to="/home" onClick={handleNavigation}>
-            About
-          </Link>
-        </li>
-        <li>
-          <span
-            onClick={() => handleScrollLink("services")}
-            className="scroll-link"
-          >
-            Services
-          </span>
-        </li>
-        <li>
-          <span
-            onClick={() => handleScrollLink("plans")}
-            className="scroll-link"
-          >
-            Plans
-          </span>
-        </li>
-        <li>
-          <span onClick={() => handleScrollLink("faq")} className="scroll-link">
-            Help
-          </span>
-        </li>
-        <li>
-          <Link to="/terms" onClick={handleNavigation}>
-            Terms & Conditions
-          </Link>
-        </li>
+        {isAuthenticated && (
+          <>
+            <li>
+              <Link to="/home" onClick={handleNavigation}>
+                Home
+              </Link>
+            </li>
+            <li>
+              <Link to="/home" onClick={handleNavigation}>
+                About
+              </Link>
+            </li>
+            <li>
+              <span
+                onClick={() => handleScrollLink("services")}
+                className="scroll-link"
+              >
+                Services
+              </span>
+            </li>
+            <li>
+              <span
+                onClick={() => handleScrollLink("plans")}
+                className="scroll-link"
+              >
+                Plans
+              </span>
+            </li>
+            <li>
+              <span onClick={() => handleScrollLink("faq")} className="scroll-link">
+                Help
+              </span>
+            </li>
+            <li>
+              <Link to="/terms" onClick={handleNavigation}>
+                Terms & Conditions
+              </Link>
+            </li>
+          </>
+        )}
       </ul>
       <div className={`navbar-buttons ${isMenuOpen ? "active" : ""}`}>
-        <Link to="/signup" onClick={handleNavigation}>
-          <button className={`signup-btn ${isSignupPage ? "active" : ""}`}>
-            <FaUser /> SIGNUP
-          </button>
-        </Link>
-        <Link to="/login" onClick={handleNavigation}>
-          <button className={`login-btn ${isLoginPage ? "active" : ""}`}>
-            <FaSignInAlt /> LOGIN
-          </button>
-        </Link>
+        {isAuthenticated ? (
+          <>
+            <div className="navbar-user-info">
+              <span className="navbar-username">
+                <FaUser /> {user?.nome || user?.username}
+              </span>
+            </div>
+            <button onClick={handleLogout} className="logout-btn">
+              <FaSignOutAlt /> SAIR
+            </button>
+          </>
+        ) : (
+          <>
+            <Link to="/signup" onClick={handleNavigation}>
+              <button className={`signup-btn ${isSignupPage ? "active" : ""}`}>
+                <FaUser /> SIGNUP
+              </button>
+            </Link>
+            <Link to="/login" onClick={handleNavigation}>
+              <button className={`login-btn ${isLoginPage ? "active" : ""}`}>
+                <FaSignInAlt /> LOGIN
+              </button>
+            </Link>
+          </>
+        )}
       </div>
     </nav>
   );
