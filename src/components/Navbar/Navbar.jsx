@@ -80,46 +80,42 @@ const Navbar = () => {
         <div></div>
       </div>
       <ul className={`navbar-links ${isMenuOpen ? "active" : ""}`}>
-        {isAuthenticated && (
-          <>
-            <li>
-              <Link to="/home" onClick={handleNavigation}>
-                Home
-              </Link>
-            </li>
-            <li>
-              <Link to="/home" onClick={handleNavigation}>
-                About
-              </Link>
-            </li>
-            <li>
-              <span
-                onClick={() => handleScrollLink("services")}
-                className="scroll-link"
-              >
-                Services
-              </span>
-            </li>
-            <li>
-              <span
-                onClick={() => handleScrollLink("plans")}
-                className="scroll-link"
-              >
-                Plans
-              </span>
-            </li>
-            <li>
-              <span onClick={() => handleScrollLink("faq")} className="scroll-link">
-                Help
-              </span>
-            </li>
-            <li>
-              <Link to="/terms" onClick={handleNavigation}>
-                Terms & Conditions
-              </Link>
-            </li>
-          </>
-        )}
+        <li>
+          <Link to="/home" onClick={handleNavigation}>
+            Home
+          </Link>
+        </li>
+        <li>
+          <Link to="/home" onClick={handleNavigation}>
+            About
+          </Link>
+        </li>
+        <li>
+          <span
+            onClick={() => handleScrollLink("services")}
+            className="scroll-link"
+          >
+            Services
+          </span>
+        </li>
+        <li>
+          <span
+            onClick={() => handleScrollLink("plans")}
+            className="scroll-link"
+          >
+            Plans
+          </span>
+        </li>
+        <li>
+          <span onClick={() => handleScrollLink("faq")} className="scroll-link">
+            Help
+          </span>
+        </li>
+        <li>
+          <Link to="/terms" onClick={handleNavigation}>
+            Terms & Conditions
+          </Link>
+        </li>
       </ul>
       <div className={`navbar-buttons ${isMenuOpen ? "active" : ""}`}>
         {isAuthenticated ? (

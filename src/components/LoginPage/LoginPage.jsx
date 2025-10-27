@@ -46,13 +46,13 @@ const LoginPage = () => {
       // O redirecionamento é feito automaticamente pelo AuthContext
     } catch (err) {
       let errorMessage = "Erro ao fazer login. Verifique suas credenciais.";
-      
+
       if (err.message) {
         errorMessage = err.message;
       } else if (Array.isArray(err)) {
         errorMessage = err.join(", ");
       }
-      
+
       toast.error(errorMessage);
     } finally {
       setLoading(false);
