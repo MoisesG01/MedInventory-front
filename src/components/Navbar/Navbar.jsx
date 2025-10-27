@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from "react";
 import "./Navbar.css";
-import { FaUser, FaSignInAlt } from "react-icons/fa";
-import { Link, useLocation } from "react-router-dom";
+import { FaUser, FaSignInAlt, FaSignOutAlt } from "react-icons/fa";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
 
 const Navbar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { isAuthenticated, user, logout } = useAuth();
 
   // Verifica a página atual
   const isLoginPage = location.pathname === "/login";
@@ -55,6 +58,12 @@ const Navbar = () => {
         element.scrollIntoView({ behavior: "smooth" });
       }
     }
+  };
+
+  const handleLogout = () => {
+    logout();
+    closeMenu();
+    navigate("/home");
   };
 
   return (
@@ -111,16 +120,31 @@ const Navbar = () => {
         </li>
       </ul>
       <div className={`navbar-buttons ${isMenuOpen ? "active" : ""}`}>
-        <Link to="/signup" onClick={handleNavigation}>
-          <button className={`signup-btn ${isSignupPage ? "active" : ""}`}>
-            <FaUser /> SIGNUP
-          </button>
-        </Link>
-        <Link to="/login" onClick={handleNavigation}>
-          <button className={`login-btn ${isLoginPage ? "active" : ""}`}>
-            <FaSignInAlt /> LOGIN
-          </button>
-        </Link>
+        {isAuthenticated ? (
+          <>
+            <div className="navbar-user-info">
+              <span className="navbar-username">
+                <FaUser /> {user?.nome || user?.username}
+              </span>
+            </div>
+            <button onClick={handleLogout} className="logout-btn">
+              <FaSignOutAlt /> SAIR
+            </button>
+          </>
+        ) : (
+          <>
+            <Link to="/signup" onClick={handleNavigation}>
+              <button className={`signup-btn ${isSignupPage ? "active" : ""}`}>
+                <FaUser /> SIGNUP
+              </button>
+            </Link>
+            <Link to="/login" onClick={handleNavigation}>
+              <button className={`login-btn ${isLoginPage ? "active" : ""}`}>
+                <FaSignInAlt /> LOGIN
+              </button>
+            </Link>
+          </>
+        )}
       </div>
     </nav>
   );
