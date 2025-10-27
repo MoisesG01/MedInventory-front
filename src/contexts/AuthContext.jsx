@@ -1,13 +1,13 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
-import authService from '../services/authService';
-import { useNavigate } from 'react-router-dom';
+import React, { createContext, useState, useContext, useEffect } from "react";
+import authService from "../services/authService";
+import { useNavigate } from "react-router-dom";
 
 const AuthContext = createContext({});
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth deve ser usado dentro de um AuthProvider');
+    throw new Error("useAuth deve ser usado dentro de um AuthProvider");
   }
   return context;
 };
@@ -27,7 +27,7 @@ export const AuthProvider = ({ children }) => {
           setUser(savedUser);
         }
       } catch (err) {
-        console.error('Erro ao carregar usuário:', err);
+        console.error("Erro ao carregar usuário:", err);
       } finally {
         setLoading(false);
       }
@@ -42,10 +42,10 @@ export const AuthProvider = ({ children }) => {
       setLoading(true);
       const response = await authService.login(username, password);
       setUser(response.user);
-      navigate('/home');
+      navigate("/home");
       return response;
     } catch (err) {
-      const errorMessage = err.message || 'Erro ao fazer login';
+      const errorMessage = err.message || "Erro ao fazer login";
       setError(errorMessage);
       throw err;
     } finally {
@@ -60,10 +60,10 @@ export const AuthProvider = ({ children }) => {
       setLoading(true);
       const response = await authService.register(userData);
       setUser(response.user);
-      navigate('/home');
+      navigate("/home");
       return response;
     } catch (err) {
-      const errorMessage = err.message || 'Erro ao registrar';
+      const errorMessage = err.message || "Erro ao registrar";
       setError(errorMessage);
       throw err;
     } finally {
@@ -75,7 +75,7 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     authService.logout();
     setUser(null);
-    navigate('/login');
+    navigate("/login");
   };
 
   const value = {
