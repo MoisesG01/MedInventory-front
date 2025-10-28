@@ -22,7 +22,7 @@ const LoginPage = () => {
   // Redirecionar se já estiver autenticado
   React.useEffect(() => {
     if (isAuthenticated) {
-      navigate("/home");
+      navigate("/dashboard");
     }
   }, [isAuthenticated, navigate]);
 
@@ -43,7 +43,7 @@ const LoginPage = () => {
     try {
       await login(username, password);
       toast.success("Login realizado com sucesso!");
-      navigate("/home");
+      navigate("/dashboard");
     } catch (err) {
       let errorMessage = "Erro ao fazer login. Verifique suas credenciais.";
 

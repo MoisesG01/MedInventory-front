@@ -14,6 +14,10 @@ import LoginPage from "./components/LoginPage/LoginPage";
 import SignupPage from "./components/SignupPage/SignupPage";
 import HomePage from "./components/Home/HomePage";
 import TermsAndConditions from "./components/TermsAndConditions/TermsAndConditions";
+import Dashboard from "./components/Dashboard/Dashboard";
+import UserProfile from "./components/UserProfile/UserProfile";
+import Team from "./components/Team/Team";
+import ProtectedRoute from "./components/ProtectedRoute";
 import "./index.css";
 
 function App() {
@@ -21,15 +25,73 @@ function App() {
     <Router>
       <AuthProvider>
         <div>
-          <Navbar />
           <Routes>
             <Route path="/" element={<Navigate to="/home" replace />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/signup" element={<SignupPage />} />
-            <Route path="/home" element={<HomePage />} />
-            <Route path="/terms" element={<TermsAndConditions />} />
+            <Route
+              path="/login"
+              element={
+                <>
+                  <Navbar />
+                  <LoginPage />
+                  <Footer />
+                </>
+              }
+            />
+            <Route
+              path="/signup"
+              element={
+                <>
+                  <Navbar />
+                  <SignupPage />
+                  <Footer />
+                </>
+              }
+            />
+            <Route
+              path="/home"
+              element={
+                <>
+                  <Navbar />
+                  <HomePage />
+                  <Footer />
+                </>
+              }
+            />
+            <Route
+              path="/terms"
+              element={
+                <>
+                  <Navbar />
+                  <TermsAndConditions />
+                  <Footer />
+                </>
+              }
+            />
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <UserProfile />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/team"
+              element={
+                <ProtectedRoute>
+                  <Team />
+                </ProtectedRoute>
+              }
+            />
           </Routes>
-          <Footer />
           <ToastContainer
             position="top-right"
             autoClose={3000}
