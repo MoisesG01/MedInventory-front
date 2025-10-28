@@ -45,6 +45,33 @@ const authService = {
     }
   },
 
+  // Atualizar dados do usuário
+  async updateUser(userId, userData) {
+    try {
+      const response = await api.put(`/users/${userId}`, userData);
+      // Atualiza o localStorage com os dados atualizados
+      if (response.data) {
+        localStorage.setItem("user", JSON.stringify(response.data));
+      }
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+
+  // Deletar conta do usuário
+  async deleteUser(userId) {
+    try {
+      const response = await api.delete(`/users/${userId}`);
+      // Remove dados do localStorage após deletar
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  },
+
   // Verificar se o token é válido
   async verifyToken() {
     try {

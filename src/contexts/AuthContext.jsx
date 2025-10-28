@@ -73,6 +73,54 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
+  // Atualizar usuário
+  const updateUser = async (userId, userData) => {
+    try {
+      setError(null);
+      setLoading(true);
+      const updatedUser = await authService.updateUser(userId, userData);
+      setUser(updatedUser);
+      return updatedUser;
+    } catch (err) {
+      const errorMessage = err.message || "Erro ao atualizar usuário";
+      setError(errorMessage);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Recarregar perfil do usuário
+  const refreshProfile = async () => {
+    try {
+      setError(null);
+      const profile = await authService.getProfile();
+      setUser(profile);
+      localStorage.setItem("user", JSON.stringify(profile));
+      return profile;
+    } catch (err) {
+      console.error("Erro ao recarregar perfil:", err);
+      throw err;
+    }
+  };
+
+  // Deletar usuário
+  const deleteUser = async (userId) => {
+    try {
+      setError(null);
+      setLoading(true);
+      await authService.deleteUser(userId);
+      setUser(null);
+      return true;
+    } catch (err) {
+      const errorMessage = err.message || "Erro ao deletar conta";
+      setError(errorMessage);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const value = {
     user,
     loading,
@@ -80,6 +128,9 @@ export const AuthProvider = ({ children }) => {
     login,
     register,
     logout,
+    updateUser,
+    refreshProfile,
+    deleteUser,
     isAuthenticated: !!user,
     clearError: () => setError(null),
   };
