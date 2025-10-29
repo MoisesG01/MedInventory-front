@@ -424,3 +424,131 @@
     gap: 1rem;
   }
 }
+
+/* Delete Modal */
+.equipment-delete-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(2px);
+}
+
+.equipment-delete-modal {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  animation: modalSlideIn 0.3s ease;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.equipment-delete-modal-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 1.5rem;
+  background: #fef2f2;
+  border-radius: 50%;
+  color: #ef4444;
+  font-size: 2rem;
+}
+
+.equipment-delete-modal-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #111827;
+  text-align: center;
+  margin: 0 0 1rem 0;
+}
+
+.equipment-delete-modal-text {
+  font-size: 1rem;
+  color: #6b7280;
+  text-align: center;
+  line-height: 1.5;
+  margin: 0 0 2rem 0;
+}
+
+.equipment-delete-modal-text strong {
+  color: #111827;
+  font-weight: 600;
+}
+
+.equipment-delete-modal-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.equipment-delete-modal-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.equipment-delete-modal-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.equipment-delete-modal-btn-cancel {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.equipment-delete-modal-btn-cancel:hover:not(:disabled) {
+  background: #d1d5db;
+}
+
+.equipment-delete-modal-btn-confirm {
+  background: #ef4444;
+  color: white;
+}
+
+.equipment-delete-modal-btn-confirm:hover:not(:disabled) {
+  background: #dc2626;
+}
+
+.equipment-delete-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

@@ -19,6 +19,7 @@ import UserProfile from "./components/UserProfile/UserProfile";
 import Team from "./components/Team/Team";
 import EquipmentList from "./components/Equipment/EquipmentList";
 import EquipmentForm from "./components/Equipment/EquipmentForm";
+import EquipmentDetails from "./components/Equipment/EquipmentDetails";
 import ProtectedRoute from "./components/ProtectedRoute";
 import "./index.css";
 
@@ -106,6 +107,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <EquipmentForm />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/equipment/:id"
+              element={
+                <ProtectedRoute>
+                  <EquipmentDetails />
                 </ProtectedRoute>
               }
             />

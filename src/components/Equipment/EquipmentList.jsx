@@ -14,6 +14,8 @@ import {
   FaChevronRight,
   FaFilter,
   FaBars,
+  FaExclamationTriangle,
+  FaTimes,
 } from "react-icons/fa";
 import "./EquipmentList.css";
 
@@ -35,6 +37,11 @@ const EquipmentList = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
   const [limit] = useState(10);
+  const [deleteModal, setDeleteModal] = useState({
+    isOpen: false,
+    equipment: null,
+  });
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     loadEquipment();
@@ -85,20 +92,28 @@ const EquipmentList = () => {
     setCurrentPage(1);
   };
 
-  const handleDelete = async (id, nome) => {
-    if (
-      !window.confirm(`Tem certeza que deseja excluir o equipamento "${nome}"?`)
-    ) {
-      return;
-    }
+  const openDeleteModal = (item) => {
+    setDeleteModal({ isOpen: true, equipment: item });
+  };
+
+  const closeDeleteModal = () => {
+    setDeleteModal({ isOpen: false, equipment: null });
+  };
+
+  const handleDelete = async () => {
+    if (!deleteModal.equipment) return;
 
     try {
-      await equipmentService.delete(id);
+      setDeleting(true);
+      await equipmentService.delete(deleteModal.equipment.id);
       toast.success("Equipamento excluído com sucesso");
+      closeDeleteModal();
       loadEquipment();
     } catch (error) {
       console.error("Erro ao excluir equipamento:", error);
       toast.error("Erro ao excluir equipamento");
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -287,6 +302,7 @@ const EquipmentList = () => {
                           <button
                             className="equipment-action-btn equipment-action-view"
                             title="Visualizar"
+                            onClick={() => navigate(`/equipment/${item.id}`)}
                           >
                             <FaEye />
                           </button>
@@ -302,7 +318,7 @@ const EquipmentList = () => {
                           <button
                             className="equipment-action-btn equipment-action-delete"
                             title="Excluir"
-                            onClick={() => handleDelete(item.id, item.nome)}
+                            onClick={() => openDeleteModal(item)}
                           >
                             <FaTrash />
                           </button>
@@ -344,6 +360,57 @@ const EquipmentList = () => {
           )}
         </div>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {deleteModal.isOpen && (
+        <div
+          className="equipment-delete-modal-overlay"
+          onClick={closeDeleteModal}
+        >
+          <div
+            className="equipment-delete-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="equipment-delete-modal-icon">
+              <FaExclamationTriangle />
+            </div>
+            <h2 className="equipment-delete-modal-title">Confirmar Exclusão</h2>
+            <p className="equipment-delete-modal-text">
+              Tem certeza que deseja excluir o equipamento{" "}
+              <strong>"{deleteModal.equipment?.nome}"</strong>?
+              <br />
+              Esta ação não pode ser desfeita.
+            </p>
+            <div className="equipment-delete-modal-actions">
+              <button
+                className="equipment-delete-modal-btn equipment-delete-modal-btn-cancel"
+                onClick={closeDeleteModal}
+                disabled={deleting}
+              >
+                <FaTimes />
+                Cancelar
+              </button>
+              <button
+                className="equipment-delete-modal-btn equipment-delete-modal-btn-confirm"
+                onClick={handleDelete}
+                disabled={deleting}
+              >
+                {deleting ? (
+                  <>
+                    <span className="equipment-delete-spinner"></span>
+                    Excluindo...
+                  </>
+                ) : (
+                  <>
+                    <FaTrash />
+                    Excluir
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
