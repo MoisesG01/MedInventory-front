@@ -17,6 +17,7 @@ import TermsAndConditions from "./components/TermsAndConditions/TermsAndConditio
 import Dashboard from "./components/Dashboard/Dashboard";
 import UserProfile from "./components/UserProfile/UserProfile";
 import Team from "./components/Team/Team";
+import EquipmentList from "./components/Equipment/EquipmentList";
 import ProtectedRoute from "./components/ProtectedRoute";
 import "./index.css";
 
@@ -88,6 +89,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Team />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/equipment"
+              element={
+                <ProtectedRoute>
+                  <EquipmentList />
                 </ProtectedRoute>
               }
             />
