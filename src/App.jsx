@@ -18,6 +18,7 @@ import Dashboard from "./components/Dashboard/Dashboard";
 import UserProfile from "./components/UserProfile/UserProfile";
 import Team from "./components/Team/Team";
 import EquipmentList from "./components/Equipment/EquipmentList";
+import EquipmentForm from "./components/Equipment/EquipmentForm";
 import ProtectedRoute from "./components/ProtectedRoute";
 import "./index.css";
 
@@ -97,6 +98,22 @@ function App() {
               element={
                 <ProtectedRoute>
                   <EquipmentList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/equipment/new"
+              element={
+                <ProtectedRoute>
+                  <EquipmentForm />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/equipment/:id/edit"
+              element={
+                <ProtectedRoute>
+                  <EquipmentForm />
                 </ProtectedRoute>
               }
             />

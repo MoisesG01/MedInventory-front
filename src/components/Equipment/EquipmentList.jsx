@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import Sidebar from "../Dashboard/Sidebar";
 import equipmentService from "../../services/equipmentService";
@@ -17,6 +18,7 @@ import {
 import "./EquipmentList.css";
 
 const EquipmentList = () => {
+  const navigate = useNavigate();
   const { user } = useAuth();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -156,7 +158,10 @@ const EquipmentList = () => {
                 Gerencie e visualize todos os equipamentos hospitalares
               </p>
             </div>
-            <button className="equipment-add-btn">
+            <button
+              className="equipment-add-btn"
+              onClick={() => navigate("/equipment/new")}
+            >
               <FaPlus />
               Adicionar Equipamento
             </button>
@@ -288,6 +293,9 @@ const EquipmentList = () => {
                           <button
                             className="equipment-action-btn equipment-action-edit"
                             title="Editar"
+                            onClick={() =>
+                              navigate(`/equipment/${item.id}/edit`)
+                            }
                           >
                             <FaEdit />
                           </button>
