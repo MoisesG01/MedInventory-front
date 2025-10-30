@@ -20,7 +20,15 @@ import Team from "./components/Team/Team";
 import EquipmentList from "./components/Equipment/EquipmentList";
 import EquipmentForm from "./components/Equipment/EquipmentForm";
 import EquipmentDetails from "./components/Equipment/EquipmentDetails";
+import ComingSoon from "./components/ComingSoon/ComingSoon";
 import ProtectedRoute from "./components/ProtectedRoute";
+import {
+  FaWrench,
+  FaChartBar,
+  FaClipboardList,
+  FaCog,
+  FaQuestionCircle,
+} from "react-icons/fa";
 import "./index.css";
 
 function App() {
@@ -123,6 +131,66 @@ function App() {
               element={
                 <ProtectedRoute>
                   <EquipmentForm />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/maintenance"
+              element={
+                <ProtectedRoute>
+                  <ComingSoon
+                    title="Manutenção"
+                    description="O módulo de manutenção está em desenvolvimento e estará disponível em breve."
+                    icon={FaWrench}
+                  />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/reports"
+              element={
+                <ProtectedRoute>
+                  <ComingSoon
+                    title="Relatórios"
+                    description="A seção de relatórios está em desenvolvimento e estará disponível em breve."
+                    icon={FaChartBar}
+                  />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/inventory"
+              element={
+                <ProtectedRoute>
+                  <ComingSoon
+                    title="Inventário"
+                    description="O módulo de inventário está em desenvolvimento e estará disponível em breve."
+                    icon={FaClipboardList}
+                  />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/settings"
+              element={
+                <ProtectedRoute>
+                  <ComingSoon
+                    title="Configurações"
+                    description="A página de configurações está em desenvolvimento e estará disponível em breve."
+                    icon={FaCog}
+                  />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/help"
+              element={
+                <ProtectedRoute>
+                  <ComingSoon
+                    title="Ajuda"
+                    description="A seção de ajuda está em desenvolvimento e estará disponível em breve."
+                    icon={FaQuestionCircle}
+                  />
                 </ProtectedRoute>
               }
             />
