@@ -11,7 +11,11 @@ import {
   FaCalendar,
   FaChevronDown,
   FaChevronUp,
+  FaChevronLeft,
+  FaChevronRight,
   FaBars,
+  FaUserCircle,
+  FaIdBadge,
 } from "react-icons/fa";
 import "./Team.css";
 
@@ -24,20 +28,52 @@ const Team = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState("all");
   const [expandedMember, setExpandedMember] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [total, setTotal] = useState(0);
+  const [limit] = useState(12);
+  const [sortBy, setSortBy] = useState("nome");
+  const [sortOrder, setSortOrder] = useState("asc");
 
   useEffect(() => {
     loadTeam();
-  }, []);
+  }, [currentPage, filterType, sortBy, sortOrder]);
 
   const loadTeam = async () => {
     setLoading(true);
     try {
-      const data = await teamService.getTeam();
-      // Se a resposta for um array, usa diretamente, senão assume que está em data
-      const members = Array.isArray(data)
-        ? data
-        : data.users || data.members || [];
-      setTeamMembers(members);
+      const filters = { tipo: filterType };
+      const data = await teamService.getTeam(currentPage, limit, filters);
+
+      // Se a resposta tem paginação
+      if (data.data && data.meta) {
+        const members = Array.isArray(data.data) ? data.data : [];
+        setTeamMembers(members);
+        setTotal(data.meta.total || members.length);
+        setTotalPages(data.meta.totalPages || 1);
+      } else {
+        // Se a resposta for um array direto
+        const members = Array.isArray(data) ? data : [];
+        setTeamMembers(members);
+        setTotal(members.length);
+        setTotalPages(1);
+      }
+
+      // Aplicar filtro de busca localmente (em vez de buscar da API)
+      if (searchTerm) {
+        const filtered = teamMembers.filter(
+          (member) =>
+            (member.nome &&
+              member.nome.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            (member.username &&
+              member.username
+                .toLowerCase()
+                .includes(searchTerm.toLowerCase())) ||
+            (member.email &&
+              member.email.toLowerCase().includes(searchTerm.toLowerCase()))
+        );
+        setTeamMembers(filtered);
+      }
     } catch (error) {
       let errorMessage = "Erro ao carregar a equipe. Tente novamente.";
 
@@ -102,7 +138,7 @@ const Team = () => {
   };
 
   // Filtrar e pesquisar membros
-  const filteredMembers = teamMembers.filter((member) => {
+  let filteredMembers = teamMembers.filter((member) => {
     const matchesSearch =
       !searchTerm ||
       (member.nome &&
@@ -116,6 +152,40 @@ const Team = () => {
 
     return matchesSearch && matchesType;
   });
+
+  // Ordenar membros
+  filteredMembers = [...filteredMembers].sort((a, b) => {
+    let aValue = a[sortBy] || "";
+    let bValue = b[sortBy] || "";
+
+    if (sortBy === "createdAt") {
+      aValue = new Date(aValue);
+      bValue = new Date(bValue);
+    } else {
+      aValue = String(aValue).toLowerCase();
+      bValue = String(bValue).toLowerCase();
+    }
+
+    if (sortOrder === "asc") {
+      return aValue > bValue ? 1 : -1;
+    } else {
+      return aValue < bValue ? 1 : -1;
+    }
+  });
+
+  const handleSort = (field) => {
+    if (sortBy === field) {
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+    } else {
+      setSortBy(field);
+      setSortOrder("asc");
+    }
+  };
+
+  const handleFilterChange = (value) => {
+    setFilterType(value);
+    setCurrentPage(1);
+  };
 
   return (
     <div className="team-wrapper">
@@ -149,7 +219,7 @@ const Team = () => {
                 </div>
                 <div className="team-stat-info">
                   <p className="team-stat-label">Total de Membros</p>
-                  <p className="team-stat-value">{teamMembers.length}</p>
+                  <p className="team-stat-value">{total}</p>
                 </div>
               </div>
             </div>
@@ -171,7 +241,7 @@ const Team = () => {
                 <select
                   className="team-filter-select"
                   value={filterType}
-                  onChange={(e) => setFilterType(e.target.value)}
+                  onChange={(e) => handleFilterChange(e.target.value)}
                 >
                   <option value="all">Todos os Tipos</option>
                   <option value="Administrador">Administradores</option>
@@ -269,6 +339,34 @@ const Team = () => {
                   )}
                 </div>
               ))}
+            </div>
+          )}
+
+          {/* Pagination */}
+          {!loading && filteredMembers.length > 0 && (
+            <div className="team-pagination">
+              <div className="team-pagination-info">
+                Mostrando {filteredMembers.length} de {total} membros
+              </div>
+              <div className="team-pagination-controls">
+                <button
+                  className="team-pagination-btn"
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage(currentPage - 1)}
+                >
+                  <FaChevronLeft />
+                </button>
+                <span className="team-pagination-pages">
+                  Página {currentPage} de {totalPages}
+                </span>
+                <button
+                  className="team-pagination-btn"
+                  disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage(currentPage + 1)}
+                >
+                  <FaChevronRight />
+                </button>
+              </div>
             </div>
           )}
         </div>
