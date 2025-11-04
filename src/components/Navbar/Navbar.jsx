@@ -48,12 +48,19 @@ const Navbar = () => {
 
   const handleScrollLink = (sectionId) => {
     closeMenu();
+    // Validar sectionId para prevenir XSS - apenas alfanuméricos e hífen
+    const validSectionId = /^[a-zA-Z0-9-]+$/.test(sectionId) ? sectionId : "";
+    if (!validSectionId) {
+      console.warn("Invalid sectionId:", sectionId);
+      return;
+    }
+
     if (location.pathname !== "/home") {
-      // Se não estiver na home, navega para home com hash
-      window.location.href = `/home#${sectionId}`;
+      // Se não estiver na home, navega para home com hash usando navigate
+      navigate(`/home#${validSectionId}`);
     } else {
       // Se já estiver na home, apenas faz scroll
-      const element = document.getElementById(sectionId);
+      const element = document.getElementById(validSectionId);
       if (element) {
         element.scrollIntoView({ behavior: "smooth" });
       }
