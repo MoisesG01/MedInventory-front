@@ -1,6 +1,6 @@
 import React from 'react';
 import './HighlightsSection.css';
-import { FaTools, FaChartLine, FaShieldAlt, FaHeadset, FaRocket, FaCogs, FaSync, FaUser } from 'react-icons/fa';
+import { FaTools, FaChartLine, FaShieldAlt, FaHeadset, FaRocket, FaCogs, FaSync } from 'react-icons/fa';
 import { useInView } from 'react-intersection-observer';
 
 const highlightData = [
@@ -11,7 +11,7 @@ const highlightData = [
   { icon: <FaTools />, title: 'Personalização Completa', description: 'Configure o sistema conforme as necessidades da sua empresa.' },
   { icon: <FaCogs />, title: 'Automação Inteligente', description: 'Automatize processos repetitivos para focar no que importa.' },
   { icon: <FaSync />, title: 'Atualizações Contínuas', description: 'Sistema sempre atualizado com melhorias constantes.' },
-  { icon: <FaUser Shield />, title: 'Privacidade de Dados', description: 'Proteção total da privacidade dos dados dos seus clientes.' },
+  { icon: <FaShieldAlt />, title: 'Privacidade de Dados', description: 'Proteção total da privacidade dos dados dos seus clientes.' },
 ];
 
 const HighlightItem = ({ icon, title, description }) => {
