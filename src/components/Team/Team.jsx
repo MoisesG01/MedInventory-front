@@ -52,23 +52,8 @@ const Team = () => {
         setTotalPages(1);
       }
 
-      // Aplicar filtro de busca localmente (em vez de buscar da API)
-      if (searchTerm) {
-        const filtered = members.filter(
-          (member) =>
-            (member.nome &&
-              member.nome.toLowerCase().includes(searchTerm.toLowerCase())) ||
-            (member.username &&
-              member.username
-                .toLowerCase()
-                .includes(searchTerm.toLowerCase())) ||
-            (member.email &&
-              member.email.toLowerCase().includes(searchTerm.toLowerCase()))
-        );
-        setTeamMembers(filtered);
-      } else {
-        setTeamMembers(members);
-      }
+      // Não aplicar filtro de busca aqui - será aplicado no render
+      setTeamMembers(members);
     } catch (error) {
       let errorMessage = "Erro ao carregar a equipe. Tente novamente.";
 
@@ -86,7 +71,7 @@ const Team = () => {
     } finally {
       setLoading(false);
     }
-  }, [currentPage, filterType, limit, searchTerm]);
+  }, [currentPage, filterType, limit]);
 
   useEffect(() => {
     loadTeam();
