@@ -1,0 +1,128 @@
+name: Terraform Create Frontend Infrastructure
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to create (dev, staging, prod)'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - staging
+          - prod
+      backend_api_url:
+        description: 'Backend API URL (optional, can be set later)'
+        required: false
+        type: string
+      confirm:
+        description: 'Type "CREATE" to confirm infrastructure creation'
+        required: true
+        type: string
+
+jobs:
+  terraform-create:
+    name: Create Azure Frontend Infrastructure
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Validate Confirmation
+        if: inputs.confirm != 'CREATE'
+        run: |
+          echo "Confirmation failed. You must type 'CREATE' to proceed."
+          exit 1
+
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.6.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Extract Azure Credentials
+        id: azure-creds
+        run: |
+          CLIENT_ID=$(echo '${{ secrets.AZURE_CREDENTIALS }}' | jq -r '.clientId')
+          CLIENT_SECRET=$(echo '${{ secrets.AZURE_CREDENTIALS }}' | jq -r '.clientSecret')
+          TENANT_ID=$(echo '${{ secrets.AZURE_CREDENTIALS }}' | jq -r '.tenantId')
+          SUBSCRIPTION_ID=$(echo '${{ secrets.AZURE_CREDENTIALS }}' | jq -r '.subscriptionId')
+          
+          echo "ARM_CLIENT_ID=$CLIENT_ID" >> $GITHUB_ENV
+          echo "ARM_CLIENT_SECRET=$CLIENT_SECRET" >> $GITHUB_ENV
+          echo "ARM_TENANT_ID=$TENANT_ID" >> $GITHUB_ENV
+          echo "ARM_SUBSCRIPTION_ID=$SUBSCRIPTION_ID" >> $GITHUB_ENV
+
+      - name: Terraform Init
+        working-directory: infrastructure/terraform
+        run: terraform init
+
+      - name: Terraform Validate
+        working-directory: infrastructure/terraform
+        run: terraform validate
+
+      - name: Terraform Plan
+        working-directory: infrastructure/terraform
+        run: |
+          if [ -n "${{ inputs.backend_api_url }}" ]; then
+            terraform plan \
+              -var="environment=${{ inputs.environment }}" \
+              -var="backend_api_url=${{ inputs.backend_api_url }}" \
+              -var="sp_object_id=${{ secrets.SP_OBJECT_ID }}" \
+              -out=tfplan
+          else
+            terraform plan \
+              -var="environment=${{ inputs.environment }}" \
+              -var="sp_object_id=${{ secrets.SP_OBJECT_ID }}" \
+              -out=tfplan
+          fi
+
+      - name: Terraform Apply
+        working-directory: infrastructure/terraform
+        run: terraform apply -auto-approve tfplan
+
+      - name: Get Outputs
+        id: tf-outputs
+        working-directory: infrastructure/terraform
+        run: |
+          echo "app_url=$(terraform output -raw frontend_app_service_url)" >> $GITHUB_OUTPUT
+          echo "acr_server=$(terraform output -raw frontend_container_registry_login_server)" >> $GITHUB_OUTPUT
+          echo "app_name=$(terraform output -raw frontend_app_service_name)" >> $GITHUB_OUTPUT
+
+      - name: Summary
+        run: |
+          echo "## Frontend Infrastructure Created Successfully" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Environment:** ${{ inputs.environment }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Frontend URL:** ${{ steps.tf-outputs.outputs.app_url }}" >> $GITHUB_STEP_SUMMARY
+          echo "**ACR Server:** ${{ steps.tf-outputs.outputs.acr_server }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Next Steps:" >> $GITHUB_STEP_SUMMARY
+          echo "1. Run **Docker Build and Push** workflow to build and push the frontend image" >> $GITHUB_STEP_SUMMARY
+          echo "2. Run **Terraform Start Application** workflow to deploy the frontend" >> $GITHUB_STEP_SUMMARY
+          echo "3. Configure REACT_APP_API_URL if not set" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Get Sensitive Outputs:" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
+          echo "cd infrastructure/terraform" >> $GITHUB_STEP_SUMMARY
+          echo "terraform output -raw frontend_container_registry_admin_username" >> $GITHUB_STEP_SUMMARY
+          echo "terraform output -raw frontend_container_registry_admin_password" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload Terraform State
+        uses: actions/upload-artifact@v4
+        with:
+          name: terraform-state-frontend-${{ inputs.environment }}
+          path: infrastructure/terraform/terraform.tfstate
+          retention-days: 30
