@@ -1,0 +1,131 @@
+name: Terraform Destroy Frontend Infrastructure
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to destroy (dev, staging, prod)'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - staging
+          - prod
+      confirm_destroy:
+        description: 'Type "DESTROY" to confirm infrastructure deletion (THIS CANNOT BE UNDONE)'
+        required: true
+        type: string
+      confirm_environment:
+        description: 'Type the environment name again to confirm'
+        required: true
+        type: string
+
+jobs:
+  terraform-destroy:
+    name: Destroy Azure Frontend Infrastructure
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Validate Destroy Confirmation
+        if: inputs.confirm_destroy != 'DESTROY' || inputs.confirm_environment != inputs.environment
+        run: |
+          echo "Confirmation failed!"
+          echo "You must:"
+          echo "  1. Type 'DESTROY' in the confirmation field"
+          echo "  2. Type '${{ inputs.environment }}' in the environment confirmation field"
+          echo ""
+          echo "This action will permanently delete all frontend resources!"
+          echo "   • Container Registry (all Docker images will be lost)"
+          echo "   • App Service (application will be removed)"
+          echo "   • Service Plan"
+          echo "   • Storage Account"
+          echo ""
+          exit 1
+
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.6.0
+          terraform_wrapper: false
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Terraform Init
+        working-directory: infrastructure/terraform
+        run: terraform init
+
+      - name: Show Resources to be Destroyed
+        working-directory: infrastructure/terraform
+        run: |
+          echo "The following resources will be DESTROYED:"
+          echo ""
+          terraform state list || echo "No state found"
+          echo ""
+
+      - name: Terraform Plan Destroy
+        working-directory: infrastructure/terraform
+        run: |
+          terraform plan -destroy \
+            -var="environment=${{ inputs.environment }}" \
+            -out=destroy.tfplan
+
+      - name: Terraform Destroy
+        working-directory: infrastructure/terraform
+        run: terraform apply -auto-approve destroy.tfplan
+
+      - name: Clean Up State Files
+        working-directory: infrastructure/terraform
+        run: |
+          echo "🧹 Cleaning up Terraform files..."
+          rm -f destroy.tfplan
+          rm -f tfplan
+          rm -f terraform.tfstate*
+          rm -rf .terraform/
+          rm -f .terraform.lock.hcl
+          echo "Cleanup complete"
+
+      - name: Verify Destruction
+        working-directory: infrastructure/terraform
+        run: |
+          if [ -f terraform.tfstate ]; then
+            RESOURCES=$(terraform state list 2>/dev/null | wc -l)
+            if [ $RESOURCES -eq 0 ]; then
+              echo "All resources destroyed successfully"
+            else
+              echo "Warning: $RESOURCES resources still exist in state"
+            fi
+          else
+            echo "State file removed - infrastructure destroyed"
+          fi
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## Frontend Infrastructure Destroyed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Environment:** ${{ inputs.environment }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Timestamp:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Removed Resources:" >> $GITHUB_STEP_SUMMARY
+          echo "- Frontend Container Registry (ACR)" >> $GITHUB_STEP_SUMMARY
+          echo "- Frontend App Service" >> $GITHUB_STEP_SUMMARY
+          echo "- Frontend Service Plan" >> $GITHUB_STEP_SUMMARY
+          echo "- Frontend Storage Account" >> $GITHUB_STEP_SUMMARY
+          echo "- All Role Assignments" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Important Notes:" >> $GITHUB_STEP_SUMMARY
+          echo "- All Docker images have been permanently deleted" >> $GITHUB_STEP_SUMMARY
+          echo "- The main Resource Group was preserved (shared with backend)" >> $GITHUB_STEP_SUMMARY
+          echo "- To recreate, run the **Terraform Create Infrastructure** workflow" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### To Recreate Infrastructure:" >> $GITHUB_STEP_SUMMARY
+          echo "1. Run **Terraform Create Infrastructure** workflow" >> $GITHUB_STEP_SUMMARY
+          echo "2. Run **Docker Build and Push** workflow" >> $GITHUB_STEP_SUMMARY
+          echo "3. Run **Terraform Start Application** workflow" >> $GITHUB_STEP_SUMMARY

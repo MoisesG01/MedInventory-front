@@ -1,0 +1,143 @@
+name: Terraform Start Frontend Application
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment (dev, staging, prod)'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - staging
+          - prod
+
+jobs:
+  start-application:
+    name: Start/Restart Frontend Application
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.6.0
+          terraform_wrapper: false
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Terraform Init
+        working-directory: infrastructure/terraform
+        run: terraform init
+
+      - name: Get Infrastructure Info
+        id: infra-info
+        working-directory: infrastructure/terraform
+        run: |
+          if [ ! -f "terraform.tfstate" ]; then
+            echo "Terraform state not found. Run 'Terraform Create Infrastructure' first."
+            exit 1
+          fi
+          
+          APP_NAME=$(terraform output -raw frontend_app_service_name)
+          APP_URL=$(terraform output -raw frontend_app_service_url)
+          ACR_NAME=$(terraform output -raw frontend_container_registry_name)
+          ACR_SERVER=$(terraform output -raw frontend_container_registry_login_server)
+          
+          echo "app_name=$APP_NAME" >> $GITHUB_OUTPUT
+          echo "app_url=$APP_URL" >> $GITHUB_OUTPUT
+          echo "acr_name=$ACR_NAME" >> $GITHUB_OUTPUT
+          echo "acr_server=$ACR_SERVER" >> $GITHUB_OUTPUT
+
+      - name: Check Docker Image
+        run: |
+          ACR_NAME="${{ steps.infra-info.outputs.acr_name }}"
+          
+          echo "Checking if Docker image exists in ACR..."
+          
+          if az acr repository show --name "$ACR_NAME" --repository medinventory-frontend &> /dev/null; then
+            echo "Image found in ACR"
+            echo ""
+            echo "Available tags:"
+            az acr repository show-tags --name "$ACR_NAME" --repository medinventory-frontend --output table
+          else
+            echo "No image found in ACR!"
+            echo "Please run 'Docker Build and Push' workflow first."
+            exit 1
+          fi
+
+      - name: Restart App Service
+        run: |
+          APP_NAME="${{ steps.infra-info.outputs.app_name }}"
+          
+          echo "Restarting App Service: $APP_NAME"
+          az webapp restart --name "$APP_NAME" --resource-group "medinventory-rg"
+          
+          echo "App Service restarted"
+
+      - name: Wait for Application
+        run: |
+          APP_URL="${{ steps.infra-info.outputs.app_url }}"
+          
+          echo "Waiting for application to start (30 seconds)..."
+          sleep 30
+          
+          echo "Checking application status..."
+          
+          MAX_RETRIES=5
+          RETRY_COUNT=0
+          
+          while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+            if curl -f -s -o /dev/null "$APP_URL"; then
+              echo "Application is running!"
+              exit 0
+            else
+              RETRY_COUNT=$((RETRY_COUNT + 1))
+              if [ $RETRY_COUNT -lt $MAX_RETRIES ]; then
+                echo "Attempt $RETRY_COUNT/$MAX_RETRIES - waiting 20 more seconds..."
+                sleep 20
+              fi
+            fi
+          done
+          
+          echo "Application may still be starting. Check logs if needed."
+
+      - name: Get App Logs
+        if: failure()
+        run: |
+          APP_NAME="${{ steps.infra-info.outputs.app_name }}"
+          echo "Recent application logs:"
+          az webapp log tail --name "$APP_NAME" --resource-group "medinventory-rg" || echo "Unable to fetch logs"
+
+      - name: Summary
+        if: always()
+        run: |
+          APP_URL="${{ steps.infra-info.outputs.app_url }}"
+          APP_NAME="${{ steps.infra-info.outputs.app_name }}"
+          ACR_SERVER="${{ steps.infra-info.outputs.acr_server }}"
+          
+          echo "## Frontend Application Started" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Environment:** ${{ inputs.environment }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Application URL:** [$APP_URL]($APP_URL)" >> $GITHUB_STEP_SUMMARY
+          echo "**App Service:** $APP_NAME" >> $GITHUB_STEP_SUMMARY
+          echo "**Container:** $ACR_SERVER/medinventory-frontend:latest" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Useful Commands:" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
+          echo "# View logs" >> $GITHUB_STEP_SUMMARY
+          echo "az webapp log tail --name $APP_NAME --resource-group medinventory-rg" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "# View app settings" >> $GITHUB_STEP_SUMMARY
+          echo "az webapp config appsettings list --name $APP_NAME --resource-group medinventory-rg" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "# Restart manually" >> $GITHUB_STEP_SUMMARY
+          echo "az webapp restart --name $APP_NAME --resource-group medinventory-rg" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY

@@ -1,0 +1,197 @@
+name: Docker Build and Push Frontend
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment (dev, staging, prod)'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - staging
+          - prod
+      tag:
+        description: 'Docker image tag (default: latest)'
+        required: false
+        default: 'latest'
+        type: string
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  build-and-push:
+    name: Build and Push Frontend Docker Image to ACR
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'yarn'
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Determine Environment
+        id: determine-env
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "environment=${{ inputs.environment }}" >> $GITHUB_OUTPUT
+            echo "tag=${{ inputs.tag }}" >> $GITHUB_OUTPUT
+          elif [ "${{ github.ref }}" == "refs/heads/main" ]; then
+            echo "environment=prod" >> $GITHUB_OUTPUT
+            echo "tag=latest" >> $GITHUB_OUTPUT
+          elif [ "${{ github.ref }}" == "refs/heads/develop" ]; then
+            echo "environment=dev" >> $GITHUB_OUTPUT
+            echo "tag=latest" >> $GITHUB_OUTPUT
+          else
+            echo "environment=dev" >> $GITHUB_OUTPUT
+            echo "tag=pr-${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Get ACR Information
+        id: acr-info
+        run: |
+          RESOURCE_GROUP="medinventory-rg"
+          ENVIRONMENT="${{ steps.determine-env.outputs.environment }}"
+          
+          # Get ACR name
+          ACR_NAME="medinventoryacrfront${ENVIRONMENT}"
+          
+          echo "Looking for ACR: $ACR_NAME in resource group: $RESOURCE_GROUP"
+          
+          # Verify ACR exists
+          if az acr show --name $ACR_NAME --resource-group $RESOURCE_GROUP &> /dev/null; then
+            ACR_LOGIN_SERVER=$(az acr show --name $ACR_NAME --resource-group $RESOURCE_GROUP --query "loginServer" -o tsv)
+            
+            echo "acr_name=$ACR_NAME" >> $GITHUB_OUTPUT
+            echo "acr_login_server=$ACR_LOGIN_SERVER" >> $GITHUB_OUTPUT
+            
+            echo "ACR Name: $ACR_NAME"
+            echo "ACR Login Server: $ACR_LOGIN_SERVER"
+          else
+            echo "ERROR: ACR '$ACR_NAME' not found in resource group '$RESOURCE_GROUP'"
+            echo "Please run 'Terraform Create Infrastructure' workflow first"
+            exit 1
+          fi
+
+      - name: Install Dependencies
+        run: |
+          echo "Installing dependencies with Yarn..."
+          yarn install --frozen-lockfile
+          echo "Dependencies installed"
+
+      - name: Run Tests
+        run: |
+          echo "Running tests..."
+          yarn test --watchAll=false --passWithNoTests
+          echo "Tests passed"
+
+      - name: Build Application
+        run: |
+          echo "Building application..."
+          yarn build
+          echo "Application built successfully"
+
+      - name: Login to Azure Container Registry
+        run: |
+          echo "Logging into ACR: ${{ steps.acr-info.outputs.acr_name }}"
+          az acr login --name ${{ steps.acr-info.outputs.acr_name }}
+          echo "Successfully logged into ACR"
+
+      - name: Build Docker Image
+        run: |
+          IMAGE_NAME="${{ steps.acr-info.outputs.acr_login_server }}/medinventory-frontend"
+          IMAGE_TAG="${{ steps.determine-env.outputs.tag }}"
+          
+          echo "Building Docker image: $IMAGE_NAME:$IMAGE_TAG"
+          docker build -t $IMAGE_NAME:$IMAGE_TAG .
+          
+          # Also tag as latest if not already
+          if [ "$IMAGE_TAG" != "latest" ]; then
+            echo "Also tagging as latest"
+            docker tag $IMAGE_NAME:$IMAGE_TAG $IMAGE_NAME:latest
+          fi
+          
+          echo "Docker image built successfully"
+
+      - name: List Local Docker Images
+        run: |
+          echo "Local Docker images:"
+          docker images | grep medinventory-frontend || echo "No medinventory-frontend images found"
+
+      - name: Push Docker Image to ACR
+        run: |
+          IMAGE_NAME="${{ steps.acr-info.outputs.acr_login_server }}/medinventory-frontend"
+          IMAGE_TAG="${{ steps.determine-env.outputs.tag }}"
+          
+          echo "Pushing image: $IMAGE_NAME:$IMAGE_TAG"
+          docker push $IMAGE_NAME:$IMAGE_TAG
+          
+          # Also push latest if we tagged it
+          if [ "$IMAGE_TAG" != "latest" ]; then
+            echo "Pushing latest tag"
+            docker push $IMAGE_NAME:latest
+          fi
+          
+          echo "Image pushed successfully to ACR"
+
+      - name: Verify Image in ACR
+        run: |
+          echo "Verifying images in ACR..."
+          echo ""
+          echo "All repositories:"
+          az acr repository list --name ${{ steps.acr-info.outputs.acr_name }} --output table
+          echo ""
+          echo "Tags for medinventory-frontend:"
+          az acr repository show-tags --name ${{ steps.acr-info.outputs.acr_name }} --repository medinventory-frontend --output table || echo "⚠️ Repository not found or no tags"
+
+      - name: Get Image Details
+        id: image-details
+        run: |
+          IMAGE_NAME="${{ steps.acr-info.outputs.acr_login_server }}/medinventory-frontend"
+          IMAGE_TAG="${{ steps.determine-env.outputs.tag }}"
+          
+          # Get image digest
+          DIGEST=$(az acr repository show --name ${{ steps.acr-info.outputs.acr_name }} --image medinventory-frontend:$IMAGE_TAG --query "digest" -o tsv || echo "unknown")
+          
+          echo "image_full_name=$IMAGE_NAME:$IMAGE_TAG" >> $GITHUB_OUTPUT
+          echo "digest=$DIGEST" >> $GITHUB_OUTPUT
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## Frontend Docker Image Build & Push Complete" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Environment:** ${{ steps.determine-env.outputs.environment }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Image:** \`${{ steps.image-details.outputs.image_full_name }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Digest:** \`${{ steps.image-details.outputs.digest }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Registry:** ${{ steps.acr-info.outputs.acr_login_server }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Next Steps:" >> $GITHUB_STEP_SUMMARY
+          echo "1. Run **Terraform Start Application** workflow to deploy this image" >> $GITHUB_STEP_SUMMARY
+          echo "2. Or configure App Service to use this image manually" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Useful Commands:" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
+          echo "# Pull this image locally" >> $GITHUB_STEP_SUMMARY
+          echo "az acr login --name ${{ steps.acr-info.outputs.acr_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "docker pull ${{ steps.image-details.outputs.image_full_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "# List all tags" >> $GITHUB_STEP_SUMMARY
+          echo "az acr repository show-tags --name ${{ steps.acr-info.outputs.acr_name }} --repository medinventory-frontend" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
