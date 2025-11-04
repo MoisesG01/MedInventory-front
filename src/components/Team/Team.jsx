@@ -30,8 +30,8 @@ const Team = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
   const [limit] = useState(12);
-  const [sortBy, setSortBy] = useState("nome");
-  const [sortOrder, setSortOrder] = useState("asc");
+  const sortBy = "nome";
+  const sortOrder = "asc";
 
   const loadTeam = useCallback(async () => {
     setLoading(true);
@@ -75,7 +75,7 @@ const Team = () => {
 
   useEffect(() => {
     loadTeam();
-  }, [loadTeam, sortBy, sortOrder]);
+  }, [loadTeam]);
 
   const getUserInitials = (name) => {
     if (!name) return "U";
