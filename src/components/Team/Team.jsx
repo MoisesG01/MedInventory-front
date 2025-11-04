@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import Sidebar from "../Dashboard/Sidebar";
 import teamService from "../../services/teamService";
@@ -14,8 +14,6 @@ import {
   FaChevronLeft,
   FaChevronRight,
   FaBars,
-  FaUserCircle,
-  FaIdBadge,
 } from "react-icons/fa";
 import "./Team.css";
 
@@ -32,48 +30,30 @@ const Team = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
   const [limit] = useState(12);
-  const [sortBy, setSortBy] = useState("nome");
-  const [sortOrder, setSortOrder] = useState("asc");
+  const sortBy = "nome";
+  const sortOrder = "asc";
 
-  useEffect(() => {
-    loadTeam();
-  }, [currentPage, filterType, sortBy, sortOrder]);
-
-  const loadTeam = async () => {
+  const loadTeam = useCallback(async () => {
     setLoading(true);
     try {
       const filters = { tipo: filterType };
       const data = await teamService.getTeam(currentPage, limit, filters);
 
       // Se a resposta tem paginação
+      let members = [];
       if (data.data && data.meta) {
-        const members = Array.isArray(data.data) ? data.data : [];
-        setTeamMembers(members);
+        members = Array.isArray(data.data) ? data.data : [];
         setTotal(data.meta.total || members.length);
         setTotalPages(data.meta.totalPages || 1);
       } else {
         // Se a resposta for um array direto
-        const members = Array.isArray(data) ? data : [];
-        setTeamMembers(members);
+        members = Array.isArray(data) ? data : [];
         setTotal(members.length);
         setTotalPages(1);
       }
 
-      // Aplicar filtro de busca localmente (em vez de buscar da API)
-      if (searchTerm) {
-        const filtered = teamMembers.filter(
-          (member) =>
-            (member.nome &&
-              member.nome.toLowerCase().includes(searchTerm.toLowerCase())) ||
-            (member.username &&
-              member.username
-                .toLowerCase()
-                .includes(searchTerm.toLowerCase())) ||
-            (member.email &&
-              member.email.toLowerCase().includes(searchTerm.toLowerCase()))
-        );
-        setTeamMembers(filtered);
-      }
+      // Não aplicar filtro de busca aqui - será aplicado no render
+      setTeamMembers(members);
     } catch (error) {
       let errorMessage = "Erro ao carregar a equipe. Tente novamente.";
 
@@ -91,7 +71,11 @@ const Team = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentPage, filterType, limit]);
+
+  useEffect(() => {
+    loadTeam();
+  }, [loadTeam]);
 
   const getUserInitials = (name) => {
     if (!name) return "U";
@@ -173,14 +157,15 @@ const Team = () => {
     }
   });
 
-  const handleSort = (field) => {
-    if (sortBy === field) {
-      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-    } else {
-      setSortBy(field);
-      setSortOrder("asc");
-    }
-  };
+  // Remove handleSort if it's not used anywhere, or comment it out
+  // const handleSort = (field) => {
+  //   if (sortBy === field) {
+  //     setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+  //   } else {
+  //     setSortBy(field);
+  //     setSortOrder("asc");
+  //   }
+  // };
 
   const handleFilterChange = (value) => {
     setFilterType(value);
