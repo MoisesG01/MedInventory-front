@@ -43,7 +43,8 @@ echo ""
 cd "$TERRAFORM_DIR"
 
 # Inicializar o Terraform
-echo "Inicializando Terraform..."
+echo "📦 Inicializando Terraform..."
+echo "   Backend: Azure Storage (medinventorystorage/tfstate/frontend_tfstate)"
 terraform init
 echo ""
 

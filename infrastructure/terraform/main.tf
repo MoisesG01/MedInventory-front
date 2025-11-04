@@ -1,4 +1,10 @@
 terraform {
+  backend "azurerm" {
+    resource_group_name  = "medinventory-rg"
+    storage_account_name = "medinventorystorage"
+    container_name       = "tfstate"
+    key                  = "frontend_tfstate"
+  }
   required_version = ">= 1.0"
   required_providers {
     azurerm = {
@@ -12,18 +18,13 @@ provider "azurerm" {
   features {}
 }
 
-# Usar o Resource Group existente do backend
+# Use existing Resource Group (created by backend infrastructure)
 data "azurerm_resource_group" "main" {
   name = var.resource_group_name
 }
 
-# Storage account para logs (opcional, mas bom ter)
-resource "azurerm_storage_account" "frontend" {
-  name                     = "${replace(var.project_name, "-", "")}frontstorage"
-  resource_group_name      = data.azurerm_resource_group.main.name
-  location                 = data.azurerm_resource_group.main.location
-  account_tier             = "Standard"
-  account_replication_type = "LRS"
-
-  tags = var.tags
+# Use existing Storage Account (created by backend infrastructure)
+data "azurerm_storage_account" "main" {
+  name                = "${replace(var.project_name, "-", "")}storage"
+  resource_group_name = data.azurerm_resource_group.main.name
 }

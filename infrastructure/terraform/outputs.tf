@@ -41,7 +41,7 @@ output "frontend_app_service_identity_principal_id" {
   value       = azurerm_linux_web_app.frontend.identity[0].principal_id
 }
 
-output "frontend_storage_account_name" {
-  description = "Name of the frontend storage account"
-  value       = azurerm_storage_account.frontend.name
+output "storage_account_name" {
+  description = "Name of the shared storage account"
+  value       = data.azurerm_storage_account.main.name
 }

@@ -90,13 +90,12 @@ echo "Destruindo infraestrutura..."
 terraform apply "destroy.tfplan"
 
 echo ""
-echo "Limpando arquivos temporários..."
+echo "🧹 Limpando arquivos temporários..."
 rm -f destroy.tfplan
-rm -f terraform.tfstate*
 rm -f tfplan
-rm -rf .terraform/
-rm -rf .terraform.lock.hcl
 
+echo ""
+echo "ℹ️  Nota: O state está armazenado remotamente no Azure Storage"
 echo ""
 echo "============================================"
 echo "    Infraestrutura destruída com sucesso!"
@@ -111,7 +110,9 @@ echo "  ✓ Role Assignments"
 echo ""
 echo "Nota: O Resource Group principal foi mantido (usado pelo backend)"
 echo ""
-echo "Para recriar a infraestrutura, execute:"
+echo "📝 Para recriar a infraestrutura, execute:"
 echo "  ./create.sh $ENVIRONMENT"
 echo ""
-echo "Processo de destruição concluído!"
+echo "ℹ️  O arquivo 'frontend_tfstate' foi atualizado no Azure Storage"
+echo ""
+echo "✅ Processo de destruição concluído!"

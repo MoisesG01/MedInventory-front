@@ -57,6 +57,19 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
+      - name: Extract Azure Credentials
+        id: azure-creds
+        run: |
+          CLIENT_ID=$(echo '${{ secrets.AZURE_CREDENTIALS }}' | jq -r '.clientId')
+          CLIENT_SECRET=$(echo '${{ secrets.AZURE_CREDENTIALS }}' | jq -r '.clientSecret')
+          TENANT_ID=$(echo '${{ secrets.AZURE_CREDENTIALS }}' | jq -r '.tenantId')
+          SUBSCRIPTION_ID=$(echo '${{ secrets.AZURE_CREDENTIALS }}' | jq -r '.subscriptionId')
+          
+          echo "ARM_CLIENT_ID=$CLIENT_ID" >> $GITHUB_ENV
+          echo "ARM_CLIENT_SECRET=$CLIENT_SECRET" >> $GITHUB_ENV
+          echo "ARM_TENANT_ID=$TENANT_ID" >> $GITHUB_ENV
+          echo "ARM_SUBSCRIPTION_ID=$SUBSCRIPTION_ID" >> $GITHUB_ENV
+
       - name: Terraform Init
         working-directory: infrastructure/terraform
         run: terraform init
@@ -80,29 +93,26 @@ jobs:
         working-directory: infrastructure/terraform
         run: terraform apply -auto-approve destroy.tfplan
 
-      - name: Clean Up State Files
+      - name: Clean Up Plan Files
         working-directory: infrastructure/terraform
         run: |
-          echo "🧹 Cleaning up Terraform files..."
+          echo "🧹 Cleaning up plan files..."
           rm -f destroy.tfplan
           rm -f tfplan
-          rm -f terraform.tfstate*
-          rm -rf .terraform/
-          rm -f .terraform.lock.hcl
-          echo "Cleanup complete"
+          echo "✅ Cleanup complete"
+          echo "ℹ️  State is stored remotely in Azure Storage (frontend_tfstate)"
 
       - name: Verify Destruction
         working-directory: infrastructure/terraform
         run: |
-          if [ -f terraform.tfstate ]; then
-            RESOURCES=$(terraform state list 2>/dev/null | wc -l)
-            if [ $RESOURCES -eq 0 ]; then
-              echo "All resources destroyed successfully"
-            else
-              echo "Warning: $RESOURCES resources still exist in state"
-            fi
+          echo "🔍 Verifying destruction..."
+          RESOURCES=$(terraform state list 2>/dev/null | wc -l)
+          if [ $RESOURCES -eq 0 ]; then
+            echo "✅ All resources destroyed successfully"
+            echo "State 'frontend_tfstate' updated in Azure Storage"
           else
-            echo "State file removed - infrastructure destroyed"
+            echo "⚠️  Warning: $RESOURCES resources still exist in state"
+            terraform state list
           fi
 
       - name: Summary

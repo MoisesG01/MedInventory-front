@@ -2,6 +2,19 @@
 
 Este diretório contém a infraestrutura como código (IaC) usando Terraform para o frontend do MedInventory na Azure.
 
+## 🔄 Backend Remoto
+
+O Terraform state é armazenado remotamente no Azure Storage:
+
+- **Resource Group**: `medinventory-rg` (compartilhado)
+- **Storage Account**: `medinventorystorage` (compartilhado)
+- **Container**: `tfstate` (compartilhado)
+- **State File**: `frontend_tfstate` (único para frontend)
+
+> **Importante**: O backend é compartilhado com a infraestrutura do backend, mas usa arquivos de state **separados**:
+> - `terraform.tfstate` → Backend API
+> - `frontend_tfstate` → Frontend App (este projeto)
+
 ## Pré-requisitos
 
 Antes de começar, certifique-se de ter instalado:
