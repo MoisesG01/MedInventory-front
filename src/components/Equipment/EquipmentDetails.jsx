@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import Sidebar from "../Dashboard/Sidebar";
@@ -8,7 +8,6 @@ import {
   FaEdit,
   FaTrash,
   FaArrowLeft,
-  FaCalendar,
   FaDollarSign,
   FaShieldAlt,
   FaWrench,
@@ -27,11 +26,7 @@ const EquipmentDetails = () => {
   const [deleteModal, setDeleteModal] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
-  useEffect(() => {
-    loadEquipment();
-  }, [id]);
-
-  const loadEquipment = async () => {
+  const loadEquipment = useCallback(async () => {
     try {
       setLoading(true);
       const data = await equipmentService.getById(id);
@@ -43,7 +38,11 @@ const EquipmentDetails = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id, navigate]);
+
+  useEffect(() => {
+    loadEquipment();
+  }, [loadEquipment]);
 
   const handleDelete = async () => {
     try {

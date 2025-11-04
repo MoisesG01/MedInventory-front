@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import Sidebar from "../Dashboard/Sidebar";
@@ -38,13 +38,7 @@ const EquipmentForm = () => {
     observacoes: "",
   });
 
-  useEffect(() => {
-    if (id) {
-      loadEquipment();
-    }
-  }, [id]);
-
-  const loadEquipment = async () => {
+  const loadEquipment = useCallback(async () => {
     try {
       setLoading(true);
       const equipment = await equipmentService.getById(id);
@@ -88,7 +82,13 @@ const EquipmentForm = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id, navigate]);
+
+  useEffect(() => {
+    if (id) {
+      loadEquipment();
+    }
+  }, [id, loadEquipment]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

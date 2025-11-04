@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import Sidebar from "../Dashboard/Sidebar";
@@ -12,7 +12,6 @@ import {
   FaEye,
   FaChevronLeft,
   FaChevronRight,
-  FaFilter,
   FaBars,
   FaExclamationTriangle,
   FaTimes,
@@ -43,11 +42,7 @@ const EquipmentList = () => {
   });
   const [deleting, setDeleting] = useState(false);
 
-  useEffect(() => {
-    loadEquipment();
-  }, [currentPage, filters]);
-
-  const loadEquipment = async () => {
+  const loadEquipment = useCallback(async () => {
     try {
       setLoading(true);
       const activeFilters = Object.fromEntries(
@@ -69,7 +64,11 @@ const EquipmentList = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filters, currentPage, limit]);
+
+  useEffect(() => {
+    loadEquipment();
+  }, [loadEquipment]);
 
   const handleSearch = () => {
     setFilters((prev) => ({ ...prev, nome: searchTerm }));
