@@ -44,5 +44,6 @@ jobs:
             -Dsonar.projectKey=MoisesG01_MedInventory-front
             -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
             -Dsonar.sources=src
+            -Dsonar.exclusions=**/*.test.js,**/*.test.jsx,**/*.spec.js,**/*.spec.jsx,src/__tests__/**
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
