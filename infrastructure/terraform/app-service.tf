@@ -5,11 +5,15 @@ resource "azurerm_linux_web_app" "frontend" {
   location            = azurerm_service_plan.frontend.location
   service_plan_id     = azurerm_service_plan.frontend.id
 
+  identity {
+    type = "SystemAssigned"
+  }
+
   site_config {
     always_on = var.app_service_sku != "F1" # Free tier doesn't support always_on
     
     application_stack {
-      docker_image_name   = "${azurerm_container_registry.frontend.login_server}/${var.project_name}-frontend:latest"
+      docker_image_name   = "${var.project_name}-frontend:latest"
       docker_registry_url = "https://${azurerm_container_registry.frontend.login_server}"
     }
 
@@ -31,11 +35,9 @@ resource "azurerm_linux_web_app" "frontend" {
     NODE_ENV = var.environment
     PORT     = "3000"
     
-    # ACR credentials (using admin account)
-    DOCKER_REGISTRY_SERVER_URL      = "https://${azurerm_container_registry.frontend.login_server}"
-    DOCKER_REGISTRY_SERVER_USERNAME = azurerm_container_registry.frontend.admin_username
-    DOCKER_REGISTRY_SERVER_PASSWORD = azurerm_container_registry.frontend.admin_password
-    DOCKER_ENABLE_CI                = "true"
+    # ACR configuration (using Managed Identity via role assignment)
+    DOCKER_REGISTRY_SERVER_URL = "https://${azurerm_container_registry.frontend.login_server}"
+    DOCKER_ENABLE_CI           = "true"
     
     # Enable logging
     WEBSITES_ENABLE_APP_SERVICE_STORAGE = "false"

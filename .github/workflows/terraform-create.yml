@@ -72,6 +72,13 @@ jobs:
         working-directory: infrastructure/terraform
         run: terraform validate
 
+      - name: Get Service Principal Object ID
+        id: get-sp-id
+        run: |
+          CLIENT_ID=$(echo '${{ secrets.AZURE_CREDENTIALS }}' | jq -r '.clientId')
+          SP_OBJECT_ID=$(az ad sp show --id $CLIENT_ID --query id -o tsv)
+          echo "sp_object_id=$SP_OBJECT_ID" >> $GITHUB_OUTPUT
+
       - name: Terraform Plan
         working-directory: infrastructure/terraform
         run: |
@@ -79,10 +86,12 @@ jobs:
             terraform plan \
               -var="environment=${{ inputs.environment }}" \
               -var="backend_api_url=${{ inputs.backend_api_url }}" \
+              -var="sp_object_id=${{ steps.get-sp-id.outputs.sp_object_id }}" \
               -out=tfplan
           else
             terraform plan \
               -var="environment=${{ inputs.environment }}" \
+              -var="sp_object_id=${{ steps.get-sp-id.outputs.sp_object_id }}" \
               -out=tfplan
           fi
 

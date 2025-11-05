@@ -4,7 +4,7 @@ resource "azurerm_container_registry" "frontend" {
   resource_group_name = data.azurerm_resource_group.main.name
   location            = data.azurerm_resource_group.main.location
   sku                 = "Basic"
-  admin_enabled       = true
+  admin_enabled       = false  # Using Managed Identity instead
 
   tags = merge(var.tags, {
     Component = "Frontend-ACR"

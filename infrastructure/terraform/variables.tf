@@ -34,6 +34,13 @@ variable "backend_api_url" {
   default     = ""  # Will be set during deployment
 }
 
+variable "sp_object_id" {
+  description = "Object ID of the Service Principal for GitHub Actions (for ACR push permissions)"
+  type        = string
+  default     = ""
+  sensitive   = true
+}
+
 variable "tags" {
   description = "Tags to apply to resources"
   type        = map(string)
