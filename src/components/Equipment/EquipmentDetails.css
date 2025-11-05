@@ -1,0 +1,344 @@
+.equipment-details-wrapper {
+  display: flex;
+  min-height: 100vh;
+  background: #f3f4f6;
+}
+
+.equipment-details-container {
+  margin-left: 280px;
+  width: calc(100% - 280px);
+  min-height: 100vh;
+  transition: margin-left 0.3s ease, width 0.3s ease;
+}
+
+.equipment-details-container.collapsed {
+  margin-left: 80px;
+  width: calc(100% - 80px);
+}
+
+.equipment-details-inner {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Mobile Menu Button */
+.equipment-details-mobile-menu-btn {
+  display: none;
+}
+
+/* Loading State */
+.equipment-details-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  color: #6b7280;
+  font-size: 1.125rem;
+}
+
+/* Header */
+.equipment-details-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.equipment-details-back-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1rem;
+  background: white;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  color: #374151;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.equipment-details-back-btn:hover {
+  background: #f9fafb;
+  border-color: #d1d5db;
+}
+
+.equipment-details-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.equipment-details-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.equipment-details-btn-edit {
+  background: #10b981;
+  color: white;
+}
+
+.equipment-details-btn-edit:hover {
+  background: #059669;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.equipment-details-btn-delete {
+  background: #ef4444;
+  color: white;
+}
+
+.equipment-details-btn-delete:hover {
+  background: #dc2626;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+/* Main Info */
+.equipment-details-main {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+}
+
+.equipment-details-title-section {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.equipment-details-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.equipment-details-status {
+  padding: 0.375rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.equipment-details-subtitle {
+  font-size: 1.125rem;
+  color: #6b7280;
+  margin: 0 0 0.5rem 0;
+}
+
+.equipment-details-code {
+  font-size: 0.875rem;
+  color: #9ca3af;
+  margin: 0;
+}
+
+/* Info Cards Grid */
+.equipment-details-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.equipment-details-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+}
+
+.equipment-details-card-full {
+  grid-column: 1 / -1;
+}
+
+.equipment-details-card-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0 0 1.25rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid #10b981;
+}
+
+.equipment-details-info-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.equipment-details-info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.equipment-details-info-item:last-child {
+  border-bottom: none;
+}
+
+.equipment-details-info-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #6b7280;
+}
+
+.equipment-details-info-value {
+  font-size: 0.875rem;
+  color: #111827;
+  font-weight: 500;
+  text-align: right;
+  max-width: 60%;
+}
+
+.equipment-details-status-badge {
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+}
+
+/* Status Badge Classes */
+.status-disponivel {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.status-em-uso {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.status-manutencao {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.status-inativo {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.status-sucateado {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* Observations */
+.equipment-details-observations {
+  font-size: 1rem;
+  color: #6b7280;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Footer */
+.equipment-details-footer {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+}
+
+.equipment-details-meta {
+  font-size: 0.875rem;
+  color: #9ca3af;
+  margin: 0;
+  text-align: center;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .equipment-details-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .equipment-wrapper .sidebar {
+    display: none;
+  }
+
+  .equipment-details-mobile-menu-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    width: 44px;
+    height: 44px;
+    background: white;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    color: #10b981;
+    font-size: 1.25rem;
+    cursor: pointer;
+    z-index: 998;
+    transition: all 0.2s ease;
+  }
+
+  .equipment-details-container {
+    margin-left: 0;
+    width: 100%;
+    padding-top: 4rem;
+  }
+
+  .equipment-details-inner {
+    padding: 1rem;
+  }
+
+  .equipment-details-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .equipment-details-actions {
+    flex-direction: column;
+  }
+
+  .equipment-details-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .equipment-details-main {
+    padding: 1.5rem;
+  }
+
+  .equipment-details-title-section {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .equipment-details-info-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .equipment-details-info-value {
+    max-width: 100%;
+    text-align: left;
+  }
+}

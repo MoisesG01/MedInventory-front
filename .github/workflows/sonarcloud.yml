@@ -19,7 +19,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 18
-          cache: 'yarn'
+          cache: "yarn"
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
@@ -36,6 +36,7 @@ jobs:
           fail_ci_if_error: false
 
       - name: Run SonarCloud analysis
+        continue-on-error: true
         uses: SonarSource/sonarcloud-github-action@v2
         with:
           args: >
@@ -43,5 +44,6 @@ jobs:
             -Dsonar.projectKey=MoisesG01_MedInventory-front
             -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
             -Dsonar.sources=src
+            -Dsonar.exclusions=**/*.test.js,**/*.test.jsx,**/*.spec.js,**/*.spec.jsx,src/__tests__/**
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

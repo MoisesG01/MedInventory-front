@@ -7,7 +7,6 @@ import {
   FaEyeSlash,
   FaUser,
   FaLock,
-  FaPhone,
   FaCheck,
   FaCheckCircle,
 } from "react-icons/fa";
@@ -383,9 +382,9 @@ const SignUp = () => {
                       Termos e Condições
                     </Link>{" "}
                     e{" "}
-                    <a href="#" className="signup-terms-link">
+                    <Link to="/terms" className="signup-terms-link">
                       Política de Privacidade
-                    </a>
+                    </Link>
                   </span>
                 </label>
               </div>

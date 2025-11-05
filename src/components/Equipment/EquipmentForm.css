@@ -1,0 +1,256 @@
+.equipment-form-wrapper {
+  display: flex;
+  min-height: 100vh;
+  background: #f3f4f6;
+}
+
+.equipment-form-container {
+  margin-left: 280px;
+  width: calc(100% - 280px);
+  min-height: 100vh;
+  transition: margin-left 0.3s ease, width 0.3s ease;
+}
+
+.equipment-form-container.collapsed {
+  margin-left: 80px;
+  width: calc(100% - 80px);
+}
+
+.equipment-form-inner {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Mobile Menu Button */
+.equipment-form-mobile-menu-btn {
+  display: none;
+}
+
+/* Loading State */
+.equipment-form-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  gap: 1rem;
+  color: #6b7280;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+  font-size: 2rem;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Header */
+.equipment-form-header {
+  margin-bottom: 2rem;
+}
+
+.equipment-form-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 0.5rem 0;
+}
+
+.equipment-form-subtitle {
+  font-size: 1rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+/* Form */
+.equipment-form {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+/* Form Sections */
+.equipment-form-section {
+  padding: 2rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.equipment-form-section:last-of-type {
+  border-bottom: none;
+}
+
+.equipment-form-section-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0 0 1.5rem 0;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid #10b981;
+  display: inline-block;
+}
+
+/* Form Grid */
+.equipment-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+
+.equipment-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.equipment-form-field-full {
+  grid-column: 1 / -1;
+}
+
+.equipment-form-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.equipment-form-label.required::after {
+  content: " *";
+  color: #ef4444;
+}
+
+.equipment-form-input,
+.equipment-form-textarea,
+.equipment-form-select {
+  padding: 0.75rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.equipment-form-input:focus,
+.equipment-form-textarea:focus,
+.equipment-form-select:focus {
+  outline: none;
+  border-color: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+.equipment-form-textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+/* Form Actions */
+.equipment-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding: 2rem;
+  background: #f9fafb;
+  border-top: 1px solid #e5e7eb;
+}
+
+.equipment-form-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.equipment-form-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.equipment-form-btn-cancel {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.equipment-form-btn-cancel:hover:not(:disabled) {
+  background: #d1d5db;
+}
+
+.equipment-form-btn-save {
+  background: #10b981;
+  color: white;
+}
+
+.equipment-form-btn-save:hover:not(:disabled) {
+  background: #059669;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .equipment-form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .equipment-wrapper .sidebar {
+    display: none;
+  }
+
+  .equipment-form-mobile-menu-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    width: 44px;
+    height: 44px;
+    background: white;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    color: #10b981;
+    font-size: 1.25rem;
+    cursor: pointer;
+    z-index: 998;
+    transition: all 0.2s ease;
+  }
+
+  .equipment-form-container {
+    margin-left: 0;
+    width: 100%;
+    padding-top: 4rem;
+  }
+
+  .equipment-form-inner {
+    padding: 1rem;
+  }
+
+  .equipment-form-section {
+    padding: 1.5rem;
+  }
+
+  .equipment-form-actions {
+    flex-direction: column;
+    padding: 1.5rem;
+  }
+
+  .equipment-form-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
