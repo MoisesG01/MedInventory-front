@@ -36,11 +36,6 @@ output "frontend_container_registry_admin_password" {
   sensitive   = true
 }
 
-output "frontend_app_service_identity_principal_id" {
-  description = "Principal ID of the frontend App Service managed identity"
-  value       = azurerm_linux_web_app.frontend.identity[0].principal_id
-}
-
 output "storage_account_name" {
   description = "Name of the shared storage account"
   value       = data.azurerm_storage_account.main.name

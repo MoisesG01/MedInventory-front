@@ -79,12 +79,10 @@ jobs:
             terraform plan \
               -var="environment=${{ inputs.environment }}" \
               -var="backend_api_url=${{ inputs.backend_api_url }}" \
-              -var="sp_object_id=${{ secrets.SP_OBJECT_ID }}" \
               -out=tfplan
           else
             terraform plan \
               -var="environment=${{ inputs.environment }}" \
-              -var="sp_object_id=${{ secrets.SP_OBJECT_ID }}" \
               -out=tfplan
           fi
 
