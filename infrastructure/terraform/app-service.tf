@@ -9,7 +9,8 @@ resource "azurerm_linux_web_app" "frontend" {
     always_on = var.app_service_sku != "F1" # Free tier doesn't support always_on
     
     application_stack {
-      docker_image_name = "${azurerm_container_registry.frontend.login_server}/${var.project_name}-frontend:latest"
+      docker_image_name   = "${azurerm_container_registry.frontend.login_server}/${var.project_name}-frontend:latest"
+      docker_registry_url = "https://${azurerm_container_registry.frontend.login_server}"
     }
 
     # CORS configuration for API communication
@@ -34,6 +35,7 @@ resource "azurerm_linux_web_app" "frontend" {
     DOCKER_REGISTRY_SERVER_URL      = "https://${azurerm_container_registry.frontend.login_server}"
     DOCKER_REGISTRY_SERVER_USERNAME = azurerm_container_registry.frontend.admin_username
     DOCKER_REGISTRY_SERVER_PASSWORD = azurerm_container_registry.frontend.admin_password
+    DOCKER_ENABLE_CI                = "true"
     
     # Enable logging
     WEBSITES_ENABLE_APP_SERVICE_STORAGE = "false"
