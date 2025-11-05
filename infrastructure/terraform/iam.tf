@@ -2,7 +2,7 @@
 resource "azurerm_role_assignment" "acrpull_role" {
   scope                = azurerm_container_registry.frontend.id
   role_definition_name = "AcrPull"
-  principal_id         = try(azurerm_linux_web_app.frontend.identity[0].principal_id, null)
+  principal_id         = azurerm_linux_web_app.frontend.identity[0].principal_id
   depends_on = [
     azurerm_linux_web_app.frontend
   ]
