@@ -63,17 +63,17 @@ jobs:
         id: infra-info
         working-directory: infrastructure/terraform
         run: |
-          echo "🔍 Checking remote state..."
+          echo "Checking remote state..."
           
           # Verify state exists by trying to list resources
           if ! terraform state list &> /dev/null; then
-            echo "❌ Terraform state is empty or not found."
+            echo "Terraform state is empty or not found."
             echo "Please run 'Terraform Create Infrastructure' workflow first."
             exit 1
           fi
           
           RESOURCE_COUNT=$(terraform state list | wc -l)
-          echo "✅ Found $RESOURCE_COUNT resources in state"
+          echo "Found $RESOURCE_COUNT resources in state"
           
           APP_NAME=$(terraform output -raw frontend_app_service_name)
           APP_URL=$(terraform output -raw frontend_app_service_url)
