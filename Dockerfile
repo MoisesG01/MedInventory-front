@@ -13,6 +13,10 @@ RUN yarn install --frozen-lockfile --silent
 # Copia o restante dos arquivos da aplicação
 COPY . .
 
+# Define a URL da API como build argument
+ARG REACT_APP_API_URL=http://localhost:3000
+ENV REACT_APP_API_URL=${REACT_APP_API_URL}
+
 # Build da aplicação para produção
 RUN yarn build
 
@@ -31,5 +35,5 @@ COPY --from=builder /app/build ./build
 # Expõe a porta 3000
 EXPOSE 3000
 
-# Comando para servir a aplicação
-CMD ["serve", "-s", "build", "-l", "3000"]
+# Comando para servir a aplicação (escuta em todas as interfaces)
+CMD ["serve", "-s", "build", "-l", "tcp://0.0.0.0:3000"]

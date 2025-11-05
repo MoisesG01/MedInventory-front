@@ -35,7 +35,7 @@ variable "backend_api_url" {
 }
 
 variable "sp_object_id" {
-  description = "Object ID of the GitHub Actions Service Principal (for ACR push permissions)"
+  description = "Object ID of the Service Principal for GitHub Actions (for ACR push permissions)"
   type        = string
   default     = ""
   sensitive   = true

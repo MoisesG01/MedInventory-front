@@ -117,9 +117,16 @@ jobs:
         run: |
           IMAGE_NAME="${{ steps.acr-info.outputs.acr_login_server }}/medinventory-frontend"
           IMAGE_TAG="${{ steps.determine-env.outputs.tag }}"
+          ENVIRONMENT="${{ steps.determine-env.outputs.environment }}"
+          
+          # Set backend API URL based on environment
+          BACKEND_API_URL="https://medinventory-app-${ENVIRONMENT}.azurewebsites.net"
           
           echo "Building Docker image: $IMAGE_NAME:$IMAGE_TAG"
-          docker build -t $IMAGE_NAME:$IMAGE_TAG .
+          echo "Backend API URL: $BACKEND_API_URL"
+          docker build \
+            --build-arg REACT_APP_API_URL=$BACKEND_API_URL \
+            -t $IMAGE_NAME:$IMAGE_TAG .
           
           # Also tag as latest if not already
           if [ "$IMAGE_TAG" != "latest" ]; then

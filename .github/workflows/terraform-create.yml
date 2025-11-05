@@ -72,6 +72,13 @@ jobs:
         working-directory: infrastructure/terraform
         run: terraform validate
 
+      - name: Get Service Principal Object ID
+        id: get-sp-id
+        run: |
+          CLIENT_ID=$(echo '${{ secrets.AZURE_CREDENTIALS }}' | jq -r '.clientId')
+          SP_OBJECT_ID=$(az ad sp show --id $CLIENT_ID --query id -o tsv)
+          echo "sp_object_id=$SP_OBJECT_ID" >> $GITHUB_OUTPUT
+
       - name: Terraform Plan
         working-directory: infrastructure/terraform
         run: |
@@ -79,12 +86,12 @@ jobs:
             terraform plan \
               -var="environment=${{ inputs.environment }}" \
               -var="backend_api_url=${{ inputs.backend_api_url }}" \
-              -var="sp_object_id=${{ secrets.SP_OBJECT_ID }}" \
+              -var="sp_object_id=${{ steps.get-sp-id.outputs.sp_object_id }}" \
               -out=tfplan
           else
             terraform plan \
               -var="environment=${{ inputs.environment }}" \
-              -var="sp_object_id=${{ secrets.SP_OBJECT_ID }}" \
+              -var="sp_object_id=${{ steps.get-sp-id.outputs.sp_object_id }}" \
               -out=tfplan
           fi
 
@@ -119,10 +126,9 @@ jobs:
           echo "terraform output -raw frontend_container_registry_admin_username" >> $GITHUB_STEP_SUMMARY
           echo "terraform output -raw frontend_container_registry_admin_password" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-
-      - name: Upload Terraform State
-        uses: actions/upload-artifact@v4
-        with:
-          name: terraform-state-frontend-${{ inputs.environment }}
-          path: infrastructure/terraform/terraform.tfstate
-          retention-days: 30
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### State Storage:" >> $GITHUB_STEP_SUMMARY
+          echo "State is stored remotely in Azure Storage:" >> $GITHUB_STEP_SUMMARY
+          echo "- Storage Account: \`medinventorystorage\`" >> $GITHUB_STEP_SUMMARY
+          echo "- Container: \`tfstate\`" >> $GITHUB_STEP_SUMMARY
+          echo "- File: \`frontend_tfstate\`" >> $GITHUB_STEP_SUMMARY

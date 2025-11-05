@@ -10,13 +10,13 @@ resource "azurerm_linux_web_app" "frontend" {
   }
 
   site_config {
-    always_on = var.app_service_sku != "F1" # Free tier doesn't support always_on
+    always_on                            = var.app_service_sku != "F1" # Free tier doesn't support always_on
+    container_registry_use_managed_identity = true
     
     application_stack {
-      docker_image_name = "${azurerm_container_registry.frontend.login_server}/${var.project_name}-frontend:latest"
+      docker_image_name   = "${var.project_name}-frontend:latest"
+      docker_registry_url = "https://${azurerm_container_registry.frontend.login_server}"
     }
-
-    container_registry_use_managed_identity = true
 
     # CORS configuration for API communication
     cors {
@@ -36,8 +36,10 @@ resource "azurerm_linux_web_app" "frontend" {
     NODE_ENV = var.environment
     PORT     = "3000"
     
-    # Tell App Service to use Managed Identity for ACR
-    DOCKER_REGISTRY_SERVER_URL = "https://${azurerm_container_registry.frontend.login_server}"
+    # ACR configuration (using Managed Identity via role assignment)
+    DOCKER_REGISTRY_SERVER_URL            = "https://${azurerm_container_registry.frontend.login_server}"
+    DOCKER_ENABLE_CI                      = "true"
+    WEBSITES_ACR_USE_MANAGED_IDENTITY_CRED = "true"
     
     # Enable logging
     WEBSITES_ENABLE_APP_SERVICE_STORAGE = "false"
