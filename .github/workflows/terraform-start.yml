@@ -46,6 +46,15 @@ jobs:
           echo "ARM_TENANT_ID=$TENANT_ID" >> $GITHUB_ENV
           echo "ARM_SUBSCRIPTION_ID=$SUBSCRIPTION_ID" >> $GITHUB_ENV
 
+      - name: Get Storage Account Key
+        id: storage-key
+        run: |
+          STORAGE_KEY=$(az storage account keys list \
+            --resource-group medinventory-rg \
+            --account-name medinventorystorage \
+            --query '[0].value' -o tsv)
+          echo "ARM_ACCESS_KEY=$STORAGE_KEY" >> $GITHUB_ENV
+
       - name: Terraform Init
         working-directory: infrastructure/terraform
         run: terraform init
@@ -54,10 +63,17 @@ jobs:
         id: infra-info
         working-directory: infrastructure/terraform
         run: |
-          if [ ! -f "terraform.tfstate" ]; then
-            echo "Terraform state not found. Run 'Terraform Create Infrastructure' first."
+          echo "🔍 Checking remote state..."
+          
+          # Verify state exists by trying to list resources
+          if ! terraform state list &> /dev/null; then
+            echo "❌ Terraform state is empty or not found."
+            echo "Please run 'Terraform Create Infrastructure' workflow first."
             exit 1
           fi
+          
+          RESOURCE_COUNT=$(terraform state list | wc -l)
+          echo "✅ Found $RESOURCE_COUNT resources in state"
           
           APP_NAME=$(terraform output -raw frontend_app_service_name)
           APP_URL=$(terraform output -raw frontend_app_service_url)
