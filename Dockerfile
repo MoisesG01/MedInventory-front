@@ -31,5 +31,5 @@ COPY --from=builder /app/build ./build
 # Expõe a porta 3000
 EXPOSE 3000
 
-# Comando para servir a aplicação
-CMD ["serve", "-s", "build", "-l", "3000"]
+# Comando para servir a aplicação (escuta em todas as interfaces)
+CMD ["serve", "-s", "build", "-l", "tcp://0.0.0.0:3000"]
