@@ -117,10 +117,9 @@ jobs:
           echo "terraform output -raw frontend_container_registry_admin_username" >> $GITHUB_STEP_SUMMARY
           echo "terraform output -raw frontend_container_registry_admin_password" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-
-      - name: Upload Terraform State
-        uses: actions/upload-artifact@v4
-        with:
-          name: terraform-state-frontend-${{ inputs.environment }}
-          path: infrastructure/terraform/terraform.tfstate
-          retention-days: 30
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### State Storage:" >> $GITHUB_STEP_SUMMARY
+          echo "State is stored remotely in Azure Storage:" >> $GITHUB_STEP_SUMMARY
+          echo "- Storage Account: \`medinventorystorage\`" >> $GITHUB_STEP_SUMMARY
+          echo "- Container: \`tfstate\`" >> $GITHUB_STEP_SUMMARY
+          echo "- File: \`frontend_tfstate\`" >> $GITHUB_STEP_SUMMARY
