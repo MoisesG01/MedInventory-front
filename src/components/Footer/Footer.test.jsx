@@ -59,7 +59,6 @@ describe("Footer", () => {
       fireEvent.change(emailInput, { target: { value: "test@example.com" } });
       fireEvent.click(submitButton);
 
-      // Verifica que o evento foi acionado
       expect(emailInput).toBeInTheDocument();
     });
 
@@ -79,7 +78,6 @@ describe("Footer", () => {
       fireEvent.change(emailInput, { target: { value: "test@example.com" } });
       fireEvent.click(submitButton);
 
-      // Campo pode ser limpo após submit
       expect(emailInput).toBeInTheDocument();
     });
   });
@@ -93,7 +91,6 @@ describe("Footer", () => {
       const contactLink = screen.getByText("Contact us").closest("a");
       const pricingLink = screen.getByText("Pricing").closest("a");
 
-      // Verifica que são links válidos
       expect(aboutLink).toBeInTheDocument();
       expect(blogLink).toBeInTheDocument();
       expect(contactLink).toBeInTheDocument();
@@ -127,7 +124,7 @@ describe("Footer", () => {
   describe("Estrutura e organização", () => {
     it("renderiza seção Company", () => {
       render(<Footer />);
-      // Verifica que os links da seção Company estão presentes
+
       expect(screen.getByText("About us")).toBeInTheDocument();
       expect(screen.getByText("Blog")).toBeInTheDocument();
       expect(screen.getByText("Contact us")).toBeInTheDocument();
@@ -136,7 +133,7 @@ describe("Footer", () => {
 
     it("renderiza seção Support", () => {
       render(<Footer />);
-      // Verifica que os links da seção Support estão presentes
+
       expect(screen.getByText("Help Center")).toBeInTheDocument();
       expect(screen.getByText("Terms of Service")).toBeInTheDocument();
       expect(screen.getByText("Legal")).toBeInTheDocument();
@@ -175,7 +172,7 @@ describe("Footer", () => {
   describe("Responsividade", () => {
     it("renderiza corretamente em diferentes tamanhos de tela", () => {
       render(<Footer />);
-      // Verifica que todos os elementos principais estão presentes
+
       expect(screen.getByText("MedInventory")).toBeInTheDocument();
       expect(screen.getByText("About us")).toBeInTheDocument();
       expect(screen.getByPlaceholderText("Your email")).toBeInTheDocument();

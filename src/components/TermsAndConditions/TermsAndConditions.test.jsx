@@ -111,7 +111,6 @@ describe("TermsAndConditions", () => {
         const header = screen.getByRole("heading", { name: sectionName });
         fireEvent.click(header);
 
-        // Verifica que a seção foi expandida usando waitFor para esperar a animação
         await waitFor(() => {
           const termsSection = header.closest(".terms-section");
           const sectionBody = termsSection?.querySelector(
@@ -156,7 +155,6 @@ describe("TermsAndConditions", () => {
 
       fireEvent.click(responsibilitiesHeader);
 
-      // Verifica que o conteúdo foi renderizado
       const termsSection = responsibilitiesHeader.closest(".terms-section");
       const sectionBody = termsSection?.querySelector(".terms-section-body");
       expect(sectionBody).toHaveClass("visible");
@@ -214,20 +212,17 @@ describe("TermsAndConditions", () => {
         name: /Responsabilidades da Conta/i,
       });
 
-      // Expande Introdução
       fireEvent.click(introHeader);
       const introSection = introHeader.closest(".terms-section");
       const introBody = introSection?.querySelector(".terms-section-body");
       expect(introBody?.classList.contains("visible")).toBe(true);
 
-      // Expande Uso do Serviço (Introdução deve recolher)
       fireEvent.click(useHeader);
       const useSection = useHeader.closest(".terms-section");
       const useBody = useSection?.querySelector(".terms-section-body");
       expect(useBody?.classList.contains("visible")).toBe(true);
       expect(introBody?.classList.contains("visible")).toBe(false);
 
-      // Expande Responsabilidades (Uso deve recolher)
       fireEvent.click(responsibilitiesHeader);
       const responsibilitiesSection =
         responsibilitiesHeader.closest(".terms-section");
@@ -242,13 +237,11 @@ describe("TermsAndConditions", () => {
       render(<TermsAndConditions />);
       const introHeader = screen.getByRole("heading", { name: /Introdução/i });
 
-      // Primeiro clique - expande
       fireEvent.click(introHeader);
       const introSection = introHeader.closest(".terms-section");
       const introBody = introSection?.querySelector(".terms-section-body");
       expect(introBody?.classList.contains("visible")).toBe(true);
 
-      // Segundo clique - recolhe
       fireEvent.click(introHeader);
       expect(introBody?.classList.contains("visible")).toBe(false);
     });
@@ -265,7 +258,6 @@ describe("TermsAndConditions", () => {
       headers.forEach((header) => {
         fireEvent.click(header);
 
-        // Verifica que apenas a seção atual está expandida
         headers.forEach((otherHeader) => {
           const otherSection = otherHeader.closest(".terms-section");
           const otherBody = otherSection?.querySelector(".terms-section-body");
@@ -329,13 +321,11 @@ describe("TermsAndConditions", () => {
       const introHeader = screen.getByRole("heading", { name: /Introdução/i });
       expect(introHeader).toBeInTheDocument();
 
-      // O heading está dentro do .terms-section-header, que é o elemento clicável
       const sectionHeader = introHeader.closest(".terms-section-header");
       expect(sectionHeader).toBeInTheDocument();
 
       fireEvent.click(sectionHeader);
 
-      // O body é sibling do header, não do heading
       const sectionBody = sectionHeader.nextElementSibling;
       expect(sectionBody).toBeInTheDocument();
       expect(sectionBody?.classList.contains("visible")).toBe(true);
@@ -351,7 +341,6 @@ describe("TermsAndConditions", () => {
       fireEvent.click(introHeader);
       fireEvent.click(introHeader);
 
-      // A seção deve estar no estado correto (recolhida após cliques ímpares)
       const introSection = introHeader.closest(".terms-section");
       const introBody = introSection?.querySelector(".terms-section-body");
       const isVisible = introBody?.classList.contains("visible");
@@ -367,17 +356,14 @@ describe("TermsAndConditions", () => {
         /Responsabilidades da Conta/i,
       ];
 
-      // Expande todas
       sectionNames.forEach((name) => {
         const header = screen.getByRole("heading", { name });
         fireEvent.click(header);
       });
 
-      // Expande a primeira novamente
       const firstHeader = screen.getByRole("heading", { name: /Introdução/i });
       fireEvent.click(firstHeader);
 
-      // A primeira deve estar expandida e as outras recolhidas
       const firstSection = firstHeader.closest(".terms-section");
       const firstBody = firstSection?.querySelector(".terms-section-body");
       expect(firstBody?.classList.contains("visible")).toBe(true);

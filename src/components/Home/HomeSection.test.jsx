@@ -2,12 +2,10 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import HomeSection from './HomeSection';
 
-// Mock react-slick
 jest.mock('react-slick', () => ({ children }) => (
   <div data-testid="mock-slider">{children}</div>
 ));
 
-// Mock das imagens
 jest.mock('../../assets/images/image_4.png', () => 'image4.png');
 jest.mock('../../assets/images/image_1.webp', () => 'image5.png');
 jest.mock('../../assets/images/image_3.webp', () => 'image6.png');

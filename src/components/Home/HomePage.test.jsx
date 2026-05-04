@@ -1,7 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import HomePage from "./HomePage";
 
-// Mock do IntersectionObserver
 global.IntersectionObserver = class IntersectionObserver {
   constructor() {}
   disconnect() {}
@@ -12,7 +11,6 @@ global.IntersectionObserver = class IntersectionObserver {
   unobserve() {}
 };
 
-// Mock do react-intersection-observer
 jest.mock("react-intersection-observer", () => ({
   useInView: () => ({
     ref: jest.fn(),
@@ -20,14 +18,12 @@ jest.mock("react-intersection-observer", () => ({
   }),
 }));
 
-// Mock do react-slick
 jest.mock("react-slick", () => {
   return function Slider({ children }) {
     return <div className="slider-mock">{children}</div>;
   };
 });
 
-// Mockando todas as seções
 jest.mock("./HomeSection", () => () => (
   <div data-testid="home-section">Home Section</div>
 ));
@@ -148,7 +144,7 @@ describe("HomePage", () => {
     it("todas as seções estão dentro do container principal", () => {
       const { container } = render(<HomePage />);
       const sections = container.querySelectorAll("[data-testid]");
-      
+
       sections.forEach((section) => {
         expect(container.firstChild.contains(section)).toBe(true);
       });

@@ -59,7 +59,6 @@ describe("FaqsSection", () => {
         .getByText(/O que é o MedInventory/i)
         .closest(".faq-question");
 
-      // Primeiro clique - expande
       fireEvent.click(firstQuestion);
       await waitFor(() => {
         expect(
@@ -67,7 +66,6 @@ describe("FaqsSection", () => {
         ).toBeInTheDocument();
       });
 
-      // Segundo clique - recolhe
       fireEvent.click(firstQuestion);
       await waitFor(() => {
         expect(
@@ -79,7 +77,6 @@ describe("FaqsSection", () => {
     it("apenas um FAQ pode estar expandido por vez", async () => {
       render(<FaqsSection />);
 
-      // Clica na primeira pergunta
       const firstQuestion = screen
         .getByText(/O que é o MedInventory/i)
         .closest(".faq-question");
@@ -90,7 +87,6 @@ describe("FaqsSection", () => {
         ).toBeInTheDocument();
       });
 
-      // Clica na segunda pergunta
       const secondQuestion = screen
         .getByText(/Como posso assinar o serviço/i)
         .closest(".faq-question");
@@ -115,10 +111,8 @@ describe("FaqsSection", () => {
         .closest(".faq-question");
       const icon = firstQuestion.querySelector(".faq-icon");
 
-      // Inicialmente deve mostrar +
       expect(icon.textContent).toBe("+");
 
-      // Clica para expandir
       fireEvent.click(firstQuestion);
 
       await waitFor(() => {
@@ -133,13 +127,11 @@ describe("FaqsSection", () => {
         .closest(".faq-question");
       const icon = firstQuestion.querySelector(".faq-icon");
 
-      // Expande
       fireEvent.click(firstQuestion);
       await waitFor(() => {
         expect(icon.textContent).toBe("-");
       });
 
-      // Recolhe
       fireEvent.click(firstQuestion);
       await waitFor(() => {
         expect(icon.textContent).toBe("+");
@@ -249,7 +241,6 @@ describe("FaqsSection", () => {
         .getByText(/O que é o MedInventory/i)
         .closest(".faq-question");
 
-      // Primeira vez - expande
       fireEvent.click(firstQuestion);
       await waitFor(() => {
         expect(
@@ -257,7 +248,6 @@ describe("FaqsSection", () => {
         ).toBeInTheDocument();
       });
 
-      // Segunda vez - recolhe
       fireEvent.click(firstQuestion);
       await waitFor(() => {
         expect(
@@ -265,7 +255,6 @@ describe("FaqsSection", () => {
         ).not.toBeInTheDocument();
       });
 
-      // Terceira vez - expande novamente
       fireEvent.click(firstQuestion);
       await waitFor(() => {
         expect(

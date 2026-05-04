@@ -3,7 +3,6 @@ import { BrowserRouter } from "react-router-dom";
 import { render, screen, fireEvent } from "@testing-library/react";
 import Navbar from "./Navbar";
 
-// Mock do AuthContext
 const mockLogout = jest.fn();
 const mockUseAuth = {
   isAuthenticated: false,
@@ -15,7 +14,6 @@ jest.mock("../../contexts/AuthContext", () => ({
   useAuth: () => mockUseAuth,
 }));
 
-// Mock do window.scrollTo para evitar warnings
 window.scrollTo = jest.fn();
 
 const renderNavbar = (route = "/") => {
@@ -126,7 +124,7 @@ describe("Navbar", () => {
   describe("Menu mobile", () => {
     it("renderiza menu toggle no mobile", () => {
       renderNavbar();
-      // Verifica se há elementos que indicam menu mobile
+
       const menuToggle = document.querySelector(".menu-toggle");
       expect(menuToggle).toBeInTheDocument();
     });
@@ -137,7 +135,7 @@ describe("Navbar", () => {
 
       expect(menuToggle).not.toHaveClass("active");
       fireEvent.click(menuToggle);
-      // Verifica se o menu foi ativado
+
       expect(menuToggle).toBeInTheDocument();
     });
   });
@@ -160,7 +158,7 @@ describe("Navbar", () => {
       const servicesLink = screen.getByText(/Services/i);
 
       fireEvent.click(servicesLink);
-      // Verifica que o scroll foi chamado (mesmo que seja mockado)
+
       expect(servicesLink).toBeInTheDocument();
     });
   });
@@ -171,7 +169,6 @@ describe("Navbar", () => {
       const homeLink = screen.getByText(/Home/i);
       fireEvent.click(homeLink);
 
-      // Menu deve fechar após navegação
       expect(homeLink).toBeInTheDocument();
     });
 
@@ -207,7 +204,7 @@ describe("Navbar", () => {
       const homeLink = screen.getByText(/Home/i);
 
       fireEvent.click(homeLink);
-      // window.scrollTo deve ser chamado
+
       expect(window.scrollTo).toHaveBeenCalled();
     });
   });
@@ -218,7 +215,6 @@ describe("Navbar", () => {
       mockUseAuth.user = {};
       renderNavbar();
 
-      // Deve renderizar sem quebrar
       expect(screen.getByText(/SAIR/i)).toBeInTheDocument();
     });
 

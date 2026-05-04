@@ -1,7 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import HighlightsSection from "./HighlightsSection";
 
-// Mock do useInView para sempre retornar true
 jest.mock("react-intersection-observer", () => ({
   useInView: () => ({
     ref: jest.fn(),

@@ -158,7 +158,7 @@ describe("ComingSoon", () => {
     );
 
     const mobileMenuButton = container.querySelector(".coming-soon-mobile-menu-btn");
-    
+
     expect(mobileMenuButton).toBeInTheDocument();
   });
 

@@ -58,7 +58,6 @@ describe("NewsletterSection", () => {
       expect(subscribeButton).not.toBeDisabled();
       fireEvent.click(subscribeButton);
 
-      // Botão ainda deve estar presente após o clique
       expect(subscribeButton).toBeInTheDocument();
     });
 
@@ -82,11 +81,9 @@ describe("NewsletterSection", () => {
       render(<NewsletterSection />);
       const emailInput = screen.getByPlaceholderText(/Enter your email/i);
 
-      // Digita algo
       fireEvent.change(emailInput, { target: { value: "test@example.com" } });
       expect(emailInput).toHaveValue("test@example.com");
 
-      // Limpa o campo
       fireEvent.change(emailInput, { target: { value: "" } });
       expect(emailInput).toHaveValue("");
     });
@@ -148,13 +145,11 @@ describe("NewsletterSection", () => {
 
       fireEvent.change(emailInput, { target: { value: "user@test.com" } });
 
-      // Clica no botão
       const subscribeButton = screen.getByRole("button", {
         name: /subscribe/i,
       });
       fireEvent.click(subscribeButton);
 
-      // Email ainda deve estar presente
       expect(emailInput).toHaveValue("user@test.com");
     });
 
@@ -167,10 +162,8 @@ describe("NewsletterSection", () => {
 
       fireEvent.change(emailInput, { target: { value: "test@example.com" } });
 
-      // Simula Enter no campo de email
       fireEvent.keyDown(emailInput, { key: "Enter", code: "Enter" });
 
-      // Botão ainda deve estar presente
       expect(subscribeButton).toBeInTheDocument();
     });
   });
