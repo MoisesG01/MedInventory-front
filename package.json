@@ -56,6 +56,6 @@
     "cross-env": "^10.1.0",
     "cypress": "^14.4.1",
     "jest": "^27.5.1",
-    "start-server-and-test": "^3.0.2"
+    "start-server-and-test": "2.1.5"
   }
 }

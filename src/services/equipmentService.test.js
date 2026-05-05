@@ -1,20 +1,18 @@
+jest.mock('../utils/api', () => ({
+    __esModule: true,
+    default: {
+        get: jest.fn(),
+        post: jest.fn(),
+        put: jest.fn(),
+        patch: jest.fn(),
+        delete: jest.fn(),
+    },
+}));
 
 import equipmentService from './equipmentService';
+import api from '../utils/api';
 
-const mockApi = {
-    get: jest.fn(),
-    post: jest.fn(),
-    put: jest.fn(),
-    patch: jest.fn(),
-    delete: jest.fn(),
-};
-
-beforeAll(() => {
-    global.api = mockApi;
-});
-afterAll(() => {
-    delete global.api;
-});
+const mockApi = api;
 
 describe('equipmentService', () => {
     beforeEach(() => {
