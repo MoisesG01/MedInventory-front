@@ -143,26 +143,39 @@ describe('equipmentService', () => {
     });
 
     it('deve exportar equipamentos para CSV sem filtros', async () => {
+        const mockBlob = new Blob(['a,b'], { type: 'text/csv' });
         mockApi.get.mockResolvedValue({
-            data: { downloadUrl: 'https://blob/file.csv' },
+            data: mockBlob,
+            headers: {},
         });
 
         const result = await equipmentService.exportCsv();
 
         expect(mockApi.get).toHaveBeenCalledWith(
             expect.stringContaining('/equipamentos/export/csv'),
+            expect.objectContaining({
+                responseType: 'blob',
+                headers: { Accept: 'text/csv' },
+            }),
         );
-        expect(result.downloadUrl).toContain('file.csv');
+        expect(result.blob).toBe(mockBlob);
+        expect(result.fileName).toBe('equipamentos.csv');
     });
 
     it('deve exportar equipamentos para CSV com filtros', async () => {
         mockApi.get.mockResolvedValue({
-            data: { downloadUrl: 'https://blob/file.csv' },
+            data: new Blob(['x']),
+            headers: {
+                'content-disposition': 'attachment; filename="export.csv"',
+            },
         });
 
-        await equipmentService.exportCsv({ statusOperacional: 'DISPONIVEL' });
+        const result = await equipmentService.exportCsv({
+            statusOperacional: 'DISPONIVEL',
+        });
 
         const calledUrl = mockApi.get.mock.calls[0][0];
         expect(calledUrl).toContain('statusOperacional=DISPONIVEL');
+        expect(result.fileName).toBe('export.csv');
     });
 });

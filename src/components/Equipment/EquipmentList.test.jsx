@@ -92,13 +92,15 @@ describe("EquipmentList - FULL COVERAGE", () => {
     equipmentService.getAll.mockResolvedValue(mockEquipmentList);
     equipmentService.delete.mockResolvedValue({});
     equipmentService.exportCsv.mockResolvedValue({
-      downloadUrl: "http://example.com/file.csv",
+      blob: new Blob(["col1,col2"], { type: "text/csv" }),
       fileName: "equipamentos.csv",
     });
     mockNavigate.mockClear();
     toast.success.mockClear();
     toast.error.mockClear();
     window.HTMLAnchorElement.prototype.click = jest.fn();
+    window.URL.createObjectURL = jest.fn(() => "blob:http://localhost/mock");
+    window.URL.revokeObjectURL = jest.fn();
   });
 
   it("deve listar os equipamentos vindos da API", async () => {
