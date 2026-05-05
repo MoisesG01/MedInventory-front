@@ -2,6 +2,8 @@
 
 # dependencies
 /node_modules
+# projeto usa Yarn; evitar lock duplicado (Vercel/CI)
+package-lock.json
 /.pnp
 .pnp.js
 
