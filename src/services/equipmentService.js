@@ -1,3 +1,4 @@
+import api from '../utils/api';
 
 const equipmentService = {
   // Listar equipamentos com filtros e paginação

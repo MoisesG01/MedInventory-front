@@ -18,10 +18,7 @@ jobs:
       - name: Instalar dependências
         run: yarn install
 
-      - name: Start app (modo dev)
-        run: yarn start &
+      - name: Cypress E2E (sobe app e aguarda dev server)
+        run: yarn cypress:ci
         env:
           CI: true
-
-      - name: Rodar Cypress
-        run: yarn cypress:run
