@@ -1,5 +1,5 @@
 /* eslint-disable import/first */
-// Mock AuthContext before importing App to avoid axios ESM parsing issues
+
 jest.mock("./contexts/AuthContext", () => ({
   AuthProvider: ({ children }) => (
     <div data-testid="auth-provider">{children}</div>
@@ -20,7 +20,6 @@ import App from "./App";
 import { AuthProvider } from "./contexts/AuthContext";
 /* eslint-enable import/first */
 
-// Mock all components to isolate App testing
 jest.mock("./components/Navbar/Navbar", () => () => (
   <div data-testid="navbar">Navbar</div>
 ));
@@ -64,7 +63,6 @@ jest.mock("./components/ProtectedRoute", () => ({ children }) => (
   <div data-testid="protected-route">{children}</div>
 ));
 
-// Mock react-toastify
 jest.mock("react-toastify", () => ({
   ToastContainer: () => <div data-testid="toast-container">ToastContainer</div>,
 }));
@@ -77,7 +75,6 @@ describe("App", () => {
       </AuthProvider>
     );
 
-    // App deve renderizar sem erros
     expect(document.body).toBeInTheDocument();
   });
 
@@ -98,7 +95,6 @@ describe("App", () => {
       </AuthProvider>
     );
 
-    // Verifica que o App renderiza corretamente com AuthProvider
     expect(container).toBeTruthy();
   });
 });

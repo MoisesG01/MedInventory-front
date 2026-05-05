@@ -265,7 +265,6 @@ describe("PlansSection", () => {
       expect(prices[2]).toBe(149);
       expect(prices[3]).toBe(199);
 
-      // Verifica ordem crescente
       for (let i = 1; i < prices.length; i++) {
         expect(prices[i]).toBeGreaterThan(prices[i - 1]);
       }

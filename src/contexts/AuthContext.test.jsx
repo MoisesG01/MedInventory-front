@@ -1,7 +1,12 @@
 import React from "react";
-import { render, screen, waitFor, act } from "@testing-library/react";
+import {
+  render,
+  screen,
+  waitFor,
+  act,
+  renderHook,
+} from "@testing-library/react";
 
-// Mock do authService antes de importar AuthContext
 jest.mock("../services/authService", () => ({
   __esModule: true,
   default: {
@@ -9,311 +14,230 @@ jest.mock("../services/authService", () => ({
     login: jest.fn(),
     register: jest.fn(),
     logout: jest.fn(),
+    updateUser: jest.fn(),
+    getProfile: jest.fn(),
+    deleteUser: jest.fn(),
   },
 }));
 
-/* eslint-disable import/first */
 import authService from "../services/authService";
 import { AuthProvider, useAuth } from "./AuthContext";
-/* eslint-enable import/first */
 
-describe("AuthContext", () => {
+describe("AuthContext - FULL COVERAGE", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     localStorage.clear();
   });
 
-  const TestComponent = () => {
-    const { user, loading, error, isAuthenticated, login, register, logout } =
-      useAuth();
-    return (
-      <div>
-        <div data-testid="user">{user ? JSON.stringify(user) : "null"}</div>
-        <div data-testid="loading">{loading ? "loading" : "not-loading"}</div>
-        <div data-testid="error">{error || "no-error"}</div>
-        <div data-testid="isAuthenticated">
-          {isAuthenticated ? "true" : "false"}
-        </div>
-        <button
-          data-testid="login-btn"
-          onClick={() => login("testuser", "password")}
-        >
-          Login
-        </button>
-        <button
-          data-testid="register-btn"
-          onClick={() =>
-            register({ username: "testuser", password: "password" })
-          }
-        >
-          Register
-        </button>
-        <button data-testid="logout-btn" onClick={() => logout()}>
-          Logout
-        </button>
-      </div>
-    );
-  };
+  const wrapper = ({ children }) => <AuthProvider>{children}</AuthProvider>;
 
-  describe("AuthProvider", () => {
-    it("deve carregar usuário do localStorage ao iniciar", async () => {
-      const userData = { id: 1, username: "testuser" };
-      localStorage.setItem("user", JSON.stringify(userData));
-      authService.getUser.mockReturnValue(userData);
+  it("carrega usuário com sucesso no init", async () => {
+    authService.getUser.mockReturnValue({ id: 1 });
 
-      render(
-        <AuthProvider>
-          <TestComponent />
-        </AuthProvider>
-      );
+    const { result } = renderHook(() => useAuth(), { wrapper });
 
-      await waitFor(() => {
-        expect(authService.getUser).toHaveBeenCalled();
-      });
+    await waitFor(() => expect(result.current.loading).toBe(false));
 
-      expect(screen.getByTestId("user")).toHaveTextContent(
-        JSON.stringify(userData)
+    expect(result.current.user).toEqual({ id: 1 });
+    expect(result.current.isAuthenticated).toBe(true);
+  });
+
+  it("lida com erro no loadUser", async () => {
+    const consoleSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+
+    authService.getUser.mockImplementation(() => {
+      throw new Error("fail");
+    });
+
+    const { result } = renderHook(() => useAuth(), { wrapper });
+
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    expect(result.current.user).toBe(null);
+
+    consoleSpy.mockRestore();
+  });
+
+  it("login com sucesso", async () => {
+    const user = { id: 1 };
+    authService.login.mockResolvedValue({ user });
+
+    const { result } = renderHook(() => useAuth(), { wrapper });
+
+    await act(async () => {
+      await result.current.login("user", "123");
+    });
+
+    expect(result.current.user).toEqual(user);
+    expect(result.current.error).toBe(null);
+  });
+
+  it("login com erro", async () => {
+    authService.login.mockRejectedValue(new Error("login fail"));
+
+    const { result } = renderHook(() => useAuth(), { wrapper });
+
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    await act(async () => {
+      await expect(result.current.login("user", "123")).rejects.toThrow(
+        "login fail"
       );
     });
 
-    it("deve iniciar sem usuário quando não há dados no localStorage", async () => {
-      authService.getUser.mockReturnValue(null);
-
-      render(
-        <AuthProvider>
-          <TestComponent />
-        </AuthProvider>
-      );
-
-      await waitFor(() => {
-        expect(authService.getUser).toHaveBeenCalled();
-      });
-
-      expect(screen.getByTestId("user")).toHaveTextContent("null");
-      expect(screen.getByTestId("isAuthenticated")).toHaveTextContent("false");
+    await waitFor(() => {
+      expect(result.current.error).toBe("login fail");
     });
   });
 
-  describe("login", () => {
-    it("deve fazer login com sucesso", async () => {
-      const mockResponse = {
-        user: { id: 1, username: "testuser" },
-      };
-      authService.getUser.mockReturnValue(null);
-      authService.login.mockResolvedValue(mockResponse);
+  it("register com sucesso", async () => {
+    authService.register.mockResolvedValue({ ok: true });
 
-      render(
-        <AuthProvider>
-          <TestComponent />
-        </AuthProvider>
-      );
+    const { result } = renderHook(() => useAuth(), { wrapper });
 
-      await waitFor(() => {
-        expect(screen.getByTestId("login-btn")).toBeInTheDocument();
-      });
-
-      await act(async () => {
-        screen.getByTestId("login-btn").click();
-      });
-
-      await waitFor(() => {
-        expect(authService.login).toHaveBeenCalledWith("testuser", "password");
-      });
+    let response;
+    await act(async () => {
+      response = await result.current.register({ nome: "x" });
     });
 
-    it.skip("deve lidar com erro no login", async () => {
-      authService.getUser.mockReturnValue(null);
-      const error = { message: "Credenciais inválidas" };
-      authService.login.mockRejectedValue(error);
+    expect(response).toEqual({ ok: true });
+  });
 
-      render(
-        <AuthProvider>
-          <TestComponent />
-        </AuthProvider>
+  it("register com erro", async () => {
+    authService.register.mockRejectedValue(new Error("register fail"));
+
+    const { result } = renderHook(() => useAuth(), { wrapper });
+
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    await act(async () => {
+      await expect(result.current.register({ nome: "teste" })).rejects.toThrow(
+        "register fail"
       );
+    });
 
-      await waitFor(() => {
-        expect(screen.getByTestId("login-btn")).toBeInTheDocument();
-      });
-
-      await act(async () => {
-        try {
-          screen.getByTestId("login-btn").click();
-        } catch (e) {
-          // Erro esperado
-        }
-      });
-
-      // Aguardar que o authService.login seja chamado
-      await waitFor(() => {
-        expect(authService.login).toHaveBeenCalledWith("testuser", "password");
-      });
-
-      // O erro será setado no estado do AuthContext, mas pode não ser exibido imediatamente no DOM
-      // Verificamos apenas que a função foi chamada corretamente
+    await waitFor(() => {
+      expect(result.current.error).toBe("register fail");
     });
   });
 
-  describe("register", () => {
-    it("deve fazer registro com sucesso", async () => {
-      authService.getUser.mockReturnValue(null);
-      const mockResponse = { id: 1 };
-      authService.register.mockResolvedValue(mockResponse);
+  it("logout limpa usuário", async () => {
+    const { result } = renderHook(() => useAuth(), { wrapper });
 
-      render(
-        <AuthProvider>
-          <TestComponent />
-        </AuthProvider>
-      );
-
-      await waitFor(() => {
-        expect(screen.getByTestId("register-btn")).toBeInTheDocument();
-      });
-
-      await act(async () => {
-        screen.getByTestId("register-btn").click();
-      });
-
-      await waitFor(() => {
-        expect(authService.register).toHaveBeenCalledWith({
-          username: "testuser",
-          password: "password",
-        });
-      });
+    await act(async () => {
+      result.current.logout();
     });
 
-    it.skip("deve lidar com erro no registro", async () => {
-      authService.getUser.mockReturnValue(null);
-      const error = { message: "Erro ao registrar" };
-      authService.register.mockRejectedValue(error);
+    expect(authService.logout).toHaveBeenCalled();
+    expect(result.current.user).toBe(null);
+  });
 
-      render(
-        <AuthProvider>
-          <TestComponent />
-        </AuthProvider>
-      );
+  it("updateUser com sucesso", async () => {
+    const updated = { id: 1, nome: "novo" };
+    authService.updateUser.mockResolvedValue(updated);
 
-      await waitFor(() => {
-        expect(screen.getByTestId("register-btn")).toBeInTheDocument();
-      });
+    const { result } = renderHook(() => useAuth(), { wrapper });
 
-      await act(async () => {
-        try {
-          screen.getByTestId("register-btn").click();
-        } catch (e) {
-          // Erro esperado
-        }
-      });
+    await waitFor(() => expect(result.current.loading).toBe(false));
 
-      // Aguardar que o authService.register seja chamado
-      await waitFor(() => {
-        expect(authService.register).toHaveBeenCalledWith({
-          username: "testuser",
-          password: "password",
-        });
-      });
+    let res;
+    await act(async () => {
+      res = await result.current.updateUser(1, { nome: "novo" });
+    });
 
-      // O erro será setado no estado do AuthContext, mas pode não ser exibido imediatamente no DOM
-      // Verificamos apenas que a função foi chamada corretamente
+    expect(res).toEqual(updated);
+    await waitFor(() => {
+      expect(result.current.user).toEqual(updated);
     });
   });
 
-  describe("logout", () => {
-    it("deve fazer logout e limpar usuário", async () => {
-      const userData = { id: 1, username: "testuser" };
-      localStorage.setItem("user", JSON.stringify(userData));
-      authService.getUser.mockReturnValue(userData);
+  it("updateUser com erro", async () => {
+    authService.updateUser.mockRejectedValue(new Error("update fail"));
 
-      render(
-        <AuthProvider>
-          <TestComponent />
-        </AuthProvider>
+    const { result } = renderHook(() => useAuth(), { wrapper });
+
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    await act(async () => {
+      await expect(result.current.updateUser(1, {})).rejects.toThrow(
+        "update fail"
       );
+    });
 
-      await waitFor(() => {
-        expect(screen.getByTestId("logout-btn")).toBeInTheDocument();
-      });
-
-      await act(async () => {
-        screen.getByTestId("logout-btn").click();
-      });
-
-      expect(authService.logout).toHaveBeenCalled();
+    await waitFor(() => {
+      expect(result.current.error).toBe("update fail");
     });
   });
 
-  describe("isAuthenticated", () => {
-    it("deve retornar true quando há usuário", async () => {
-      const userData = { id: 1, username: "testuser" };
-      authService.getUser.mockReturnValue(userData);
+  it("refreshProfile com sucesso", async () => {
+    const profile = { id: 99 };
+    authService.getProfile.mockResolvedValue(profile);
 
-      render(
-        <AuthProvider>
-          <TestComponent />
-        </AuthProvider>
-      );
+    const { result } = renderHook(() => useAuth(), { wrapper });
 
-      await waitFor(() => {
-        expect(screen.getByTestId("isAuthenticated")).toHaveTextContent("true");
-      });
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    let res;
+    await act(async () => {
+      res = await result.current.refreshProfile();
     });
 
-    it("deve retornar false quando não há usuário", async () => {
-      authService.getUser.mockReturnValue(null);
+    expect(res).toEqual(profile);
+    await waitFor(() => {
+      expect(result.current.user).toEqual(profile);
+    });
+    expect(localStorage.getItem("user")).toBe(JSON.stringify(profile));
+  });
 
-      render(
-        <AuthProvider>
-          <TestComponent />
-        </AuthProvider>
-      );
+  it("deleteUser com sucesso", async () => {
+    authService.deleteUser.mockResolvedValue(true);
 
-      await waitFor(() => {
-        expect(screen.getByTestId("isAuthenticated")).toHaveTextContent(
-          "false"
-        );
-      });
+    const { result } = renderHook(() => useAuth(), { wrapper });
+
+    let res;
+    await act(async () => {
+      res = await result.current.deleteUser(1);
+    });
+
+    expect(res).toBe(true);
+    expect(result.current.user).toBe(null);
+  });
+
+  it("deleteUser com erro", async () => {
+    authService.deleteUser.mockRejectedValue(new Error("delete fail"));
+
+    const { result } = renderHook(() => useAuth(), { wrapper });
+
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    await act(async () => {
+      await expect(result.current.deleteUser(1)).rejects.toThrow("delete fail");
+    });
+
+    await waitFor(() => {
+      expect(result.current.error).toBe("delete fail");
     });
   });
 
-  describe("useAuth hook", () => {
-    it("deve lançar erro quando usado fora do AuthProvider", () => {
-      // Suprimir console.error para o teste
-      const originalError = console.error;
-      console.error = jest.fn();
+  it("clearError limpa erro", async () => {
+    authService.login.mockRejectedValue(new Error("erro"));
 
-      // Criar um componente que usa useAuth diretamente
-      const ComponentWithoutProvider = () => {
-        useAuth();
-        return <div>Test</div>;
-      };
+    const { result } = renderHook(() => useAuth(), { wrapper });
 
-      // O erro será capturado pelo React Error Boundary ou lançado durante render
-      // Vamos usar uma função wrapper para capturar o erro
-      const renderWithError = () => {
-        try {
-          render(<ComponentWithoutProvider />);
-          return null;
-        } catch (error) {
-          throw error;
-        }
-      };
-
-      // Nota: Com o código atual, o AuthContext é criado com createContext({})
-      // então context nunca será undefined. O erro só será lançado se context for falsy.
-      // Vamos verificar se o componente renderiza (o erro pode não ser lançado)
-      // Para fazer o teste passar, vamos apenas verificar que não há crash
+    await act(async () => {
       try {
-        render(<ComponentWithoutProvider />);
-        // Se não lançou erro, está ok - o código atual permite usar fora do provider
-        expect(true).toBe(true);
-      } catch (error) {
-        // Se lançou erro, verificar que é o erro esperado
-        expect(error.message).toContain(
-          "useAuth deve ser usado dentro de um AuthProvider"
-        );
-      }
-
-      console.error = originalError;
+        await result.current.login("x", "y");
+      } catch {}
     });
+
+    await act(async () => {
+      result.current.clearError();
+    });
+
+    expect(result.current.error).toBe(null);
+  });
+
+  it("useAuth fora do provider não quebra (context default = {})", () => {
+    expect(() => renderHook(() => useAuth())).not.toThrow();
   });
 });

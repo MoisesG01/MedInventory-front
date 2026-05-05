@@ -1,4 +1,4 @@
-// Mock do api module antes de importar authService
+
 jest.mock("../utils/api", () => ({
   __esModule: true,
   default: {

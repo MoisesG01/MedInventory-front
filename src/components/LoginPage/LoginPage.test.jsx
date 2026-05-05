@@ -1,13 +1,12 @@
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { BrowserRouter } from "react-router-dom";
+import { MemoryRouter, Routes, Route } from "react-router-dom";
 import LoginPage from "./LoginPage";
 import "@testing-library/jest-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
-// Mock do AuthContext
 const mockLogin = jest.fn();
 const mockIsAuthenticated = jest.fn(() => false);
 
@@ -18,14 +17,12 @@ jest.mock("../../contexts/AuthContext", () => ({
   }),
 }));
 
-// Mock do react-router-dom
 const mockNavigate = jest.fn();
 jest.mock("react-router-dom", () => ({
   ...jest.requireActual("react-router-dom"),
   useNavigate: () => mockNavigate,
 }));
 
-// Mock do react-toastify
 jest.mock("react-toastify", () => ({
   toast: {
     success: jest.fn(),
@@ -43,9 +40,18 @@ describe("LoginPage", () => {
 
   const renderLoginPage = () => {
     return render(
-      <BrowserRouter>
-        <LoginPage />
-      </BrowserRouter>
+      <MemoryRouter initialEntries={["/login"]}>
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          {}
+          <Route
+            path="/equipment"
+            element={<div>Página de Equipamentos</div>}
+          />
+          {}
+          <Route path="/dashboard" element={<div>Dashboard</div>} />
+        </Routes>
+      </MemoryRouter>,
     );
   };
 
@@ -98,21 +104,21 @@ describe("LoginPage", () => {
     it("renderiza campo de username com placeholder correto", () => {
       renderLoginPage();
       expect(
-        screen.getByPlaceholderText(/Nome de usuário/i)
+        screen.getByPlaceholderText(/Nome de usuário/i),
       ).toBeInTheDocument();
     });
 
     it("renderiza campo de senha com placeholder correto", () => {
       renderLoginPage();
       expect(
-        screen.getByPlaceholderText(/Digite sua senha/i)
+        screen.getByPlaceholderText(/Digite sua senha/i),
       ).toBeInTheDocument();
     });
 
     it("renderiza botão de login", () => {
       renderLoginPage();
       expect(
-        screen.getByRole("button", { name: /Entrar/i })
+        screen.getByRole("button", { name: /Entrar/i }),
       ).toBeInTheDocument();
     });
 
@@ -174,7 +180,7 @@ describe("LoginPage", () => {
 
     it("desabilita campos durante loading", async () => {
       mockLogin.mockImplementation(
-        () => new Promise((resolve) => setTimeout(resolve, 100))
+        () => new Promise((resolve) => setTimeout(resolve, 100)),
       );
       renderLoginPage();
 
@@ -199,7 +205,7 @@ describe("LoginPage", () => {
 
     it("mostra texto 'Entrando...' no botão durante loading", async () => {
       mockLogin.mockImplementation(
-        () => new Promise((resolve) => setTimeout(resolve, 100))
+        () => new Promise((resolve) => setTimeout(resolve, 100)),
       );
       renderLoginPage();
 
@@ -228,7 +234,7 @@ describe("LoginPage", () => {
 
       await waitFor(() => {
         expect(toast.error).toHaveBeenCalledWith(
-          "Por favor, preencha todos os campos"
+          "Por favor, preencha todos os campos",
         );
       });
       expect(mockLogin).not.toHaveBeenCalled();
@@ -244,7 +250,7 @@ describe("LoginPage", () => {
 
       await waitFor(() => {
         expect(toast.error).toHaveBeenCalledWith(
-          "Por favor, preencha todos os campos"
+          "Por favor, preencha todos os campos",
         );
       });
       expect(mockLogin).not.toHaveBeenCalled();
@@ -260,7 +266,7 @@ describe("LoginPage", () => {
 
       await waitFor(() => {
         expect(toast.error).toHaveBeenCalledWith(
-          "Por favor, preencha todos os campos"
+          "Por favor, preencha todos os campos",
         );
       });
       expect(mockLogin).not.toHaveBeenCalled();
@@ -297,12 +303,12 @@ describe("LoginPage", () => {
 
       await waitFor(() => {
         expect(toast.success).toHaveBeenCalledWith(
-          "Login realizado com sucesso!"
+          "Login realizado com sucesso!",
         );
       });
     });
 
-    it("navega para dashboard após login bem-sucedido", async () => {
+    it("navega para equipment após login bem-sucedido", async () => {
       mockLogin.mockResolvedValue({});
       renderLoginPage();
 
@@ -322,7 +328,7 @@ describe("LoginPage", () => {
 
   describe("Tratamento de erros", () => {
     it("mostra mensagem de erro genérica quando login falha", async () => {
-      // Passar um erro sem mensagem específica para que a mensagem genérica seja usada
+
       mockLogin.mockRejectedValue({});
       renderLoginPage();
 
@@ -336,13 +342,13 @@ describe("LoginPage", () => {
 
       await waitFor(() => {
         expect(toast.error).toHaveBeenCalledWith(
-          "Credenciais inválidas. Verifique seu usuário e senha."
+          "Credenciais inválidas. Verifique seu usuário e senha.",
         );
       });
     });
 
     it("sempre mostra mensagem genérica mesmo quando há mensagem específica (segurança)", async () => {
-      // Por segurança, não devemos revelar se o usuário existe ou se a senha está incorreta
+
       const specificErrorMessage = "Usuário não encontrado";
       mockLogin.mockRejectedValue({ message: specificErrorMessage });
       renderLoginPage();
@@ -356,17 +362,17 @@ describe("LoginPage", () => {
       fireEvent.click(loginButton);
 
       await waitFor(() => {
-        // Sempre deve mostrar mensagem genérica para evitar enumeração de usuários
+
         expect(toast.error).toHaveBeenCalledWith(
-          "Credenciais inválidas. Verifique seu usuário e senha."
+          "Credenciais inválidas. Verifique seu usuário e senha.",
         );
-        // Não deve mostrar a mensagem específica
+
         expect(toast.error).not.toHaveBeenCalledWith(specificErrorMessage);
       });
     });
 
     it("sempre mostra mensagem genérica mesmo com array de mensagens (segurança)", async () => {
-      // Por segurança, sempre mostrar mensagem genérica, mesmo com array de erros
+
       const errorMessages = ["Erro 1", "Erro 2"];
       mockLogin.mockRejectedValue(errorMessages);
       renderLoginPage();
@@ -380,9 +386,9 @@ describe("LoginPage", () => {
       fireEvent.click(loginButton);
 
       await waitFor(() => {
-        // Sempre deve mostrar mensagem genérica para evitar enumeração de usuários
+
         expect(toast.error).toHaveBeenCalledWith(
-          "Credenciais inválidas. Verifique seu usuário e senha."
+          "Credenciais inválidas. Verifique seu usuário e senha.",
         );
       });
     });
@@ -465,7 +471,8 @@ describe("LoginPage", () => {
     it("ícones de input estão presentes", () => {
       renderLoginPage();
       const icons = document.querySelectorAll(".input-icon");
-      expect(icons.length).toBe(2); // Envelope e Lock
+      expect(icons.length).toBe(2);
+
     });
   });
 

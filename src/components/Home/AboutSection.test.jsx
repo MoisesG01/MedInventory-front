@@ -2,7 +2,6 @@ import React from "react";
 import { render, screen, waitFor, act } from "@testing-library/react";
 import AboutSection from "./AboutSection";
 
-// Mock do react-intersection-observer
 const mockRef = jest.fn();
 const mockUseInView = jest.fn(() => [mockRef, true]);
 
@@ -15,14 +14,13 @@ describe("AboutSection", () => {
     jest.clearAllMocks();
     mockUseInView.mockReturnValue([mockRef, true]);
 
-    // Mock requestAnimationFrame usando setTimeout ao invés de setImmediate
     let rafId = 0;
     let frameCount = 0;
     global.requestAnimationFrame = jest.fn((cb) => {
       rafId += 1;
       frameCount += 1;
-      const simulatedTime = frameCount * 16; // ~60fps (16ms por frame)
-      // Usa setTimeout ao invés de setImmediate
+      const simulatedTime = frameCount * 16;
+
       setTimeout(() => {
         cb(simulatedTime);
       }, 0);
@@ -43,7 +41,7 @@ describe("AboutSection", () => {
 
     it("renderiza o título principal", () => {
       render(<AboutSection />);
-      // O título está dividido em dois elementos dentro de um h2
+
       const heading = screen.getByRole("heading", { level: 2 });
       expect(heading).toHaveTextContent(/Revolucionando a Gestão de/i);
       expect(heading).toHaveTextContent(/Inventário Médico/i);
@@ -68,7 +66,7 @@ describe("AboutSection", () => {
 
     it("renderiza valores iniciais das estatísticas", () => {
       render(<AboutSection />);
-      // Os valores iniciais são 0, então devem aparecer como 0 ou 0.0
+
       const statNumbers = document.querySelectorAll(".stat-number");
       expect(statNumbers.length).toBe(4);
     });
