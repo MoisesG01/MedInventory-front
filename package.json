@@ -2,6 +2,10 @@
   "name": "medinventory-front",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "yarn@1.22.22",
+  "resolutions": {
+    "cross-env": "7.0.3"
+  },
   "dependencies": {
     "@testing-library/user-event": "^13.2.1",
     "axios": "^1.12.2",
@@ -26,7 +30,8 @@
     "eject": "react-scripts eject",
     "lint": "eslint src --ext .js,.jsx",
     "cypress:open": "cypress open",
-    "cypress:run": "cypress run"
+    "cypress:run": "cypress run",
+    "cypress:ci": "cross-env BROWSER=none CI=true PORT=3005 CYPRESS_BASE_URL=http://127.0.0.1:3005 start-server-and-test start http-get://127.0.0.1:3005/home cypress:run"
   },
   "eslintConfig": {
     "extends": [
@@ -52,7 +57,9 @@
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
     "babel-jest": "^30.0.0-beta.3",
+    "cross-env": "7.0.3",
     "cypress": "^14.4.1",
-    "jest": "^27.5.1"
+    "jest": "^27.5.1",
+    "start-server-and-test": "2.1.5"
   }
 }
